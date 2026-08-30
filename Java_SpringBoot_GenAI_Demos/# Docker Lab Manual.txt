@@ -1,0 +1,347 @@
+# Docker Lab Manual
+
+---
+
+## PART A: THEORY
+
+### 1. What is Docker?
+
+Docker is a **platform to build, ship, and run applications inside containers**.
+
+An **application** = Code + Dependencies + Configuration
+
+A **container** packages all of this together so it runs the same way anywhere.
+
+---
+
+### 2. Docker Architecture
+
+```text
+Docker Client
+      |
+      v
+Docker Daemon (dockerd)
+      |
+   -----------------------------
+   |        |        |         |
+Images  Containers Networks  Volumes
+      |
+Docker Registry
+```
+
+---
+
+### 3. Core Components
+
+#### Docker Client
+
+* The user interface for Docker.
+* Examples: `docker build`, `docker run`, `docker ps`, `docker stop`
+* When a user runs `docker run nginx`, the client sends the request to the Docker Daemon.
+
+#### Docker Daemon (dockerd)
+
+* The "brain" of Docker.
+* Responsibilities: create containers, start/stop containers, build images, manage networks, manage volumes.
+
+#### Docker Image
+
+* The **blueprint** (like a Class).
+* Example: `docker pull nginx` downloads the nginx image.
+
+#### Docker Container
+
+* A **running instance of an image** (like an Object).
+* Example: `docker run nginx` → results in the nginx image running as an nginx container.
+
+#### Docker Registry
+
+* The image repository / storage location.
+* Docker Hub → public registry
+* AWS ECR → private registry
+* Azure Container Registry → private registry
+* Commands: `docker pull nginx`, `docker push myapp:v1`
+
+#### Docker Volume
+
+* Provides **persistent storage**.
+* Problem: if a container is deleted, its data is lost.
+* Solution: a volume stores data **outside** the container, so data survives container deletion.
+* Examples: MySQL data, MongoDB data.
+
+#### Docker Network
+
+* The communication layer between containers.
+* Example: Frontend container ↔ Backend container ↔ Database container — the network allows them to talk to each other.
+
+---
+
+### 4. Quick Analogy Table
+
+| Docker Term      | Analogy       |
+| ---------------- | ------------- |
+| Docker Client    | Manager       |
+| Docker Daemon    | Worker        |
+| Docker Image     | Blueprint     |
+| Docker Container | Running house |
+| Docker Hub       | Warehouse     |
+
+---
+
+### 5. Virtual Machine vs Docker Container
+
+| Virtual Machine             | Docker Container          |
+| --------------------------- | ------------------------- |
+| Has a full Operating System | Shares the host OS kernel |
+| Slower to start, heavier    | Fast startup, lightweight |
+| More memory/CPU usage       | Less memory/CPU usage     |
+
+**Benefits of Docker:** fast startup, less memory, less CPU, lightweight.
+
+---
+
+### 6. Volume vs No Volume — Why It Matters
+
+|                                    | Without Volume                    | With Volume                                |
+| ---------------------------------- | --------------------------------- | ------------------------------------------ |
+| Where is data stored?              | Inside the container's filesystem | In a Docker volume (outside the container) |
+| Container deleted (`docker rm -f`) | **Data is lost**                  | **Data is retained**                       |
+| Container                          | Temporary                         | —                                          |
+| Volume                             | —                                 | Persistent storage                         |
+
+**Q1: Why use a Docker Volume?**
+
+A: A volume provides persistent storage so data survives container deletion.
+
+**Q2: Where is MySQL data stored?**
+
+A: Without a volume → inside the container filesystem. With a volume → inside the Docker volume.
+
+---
+
+# PART B: ACTIVITIES
+
+## Activity 1: Create a Docker Image (Dockerize a Spring Boot App)
+
+| Step | Description                                              | Command                                              |
+| ---- | -------------------------------------------------------- | ---------------------------------------------------- |
+| 1    | Check Docker version                                     | `docker --version`                                   |
+| 2    | Check running containers                                 | `docker ps`                                          |
+| 3    | Change to the project directory                          | `cd /home/lkmuser/Desktop/EmployeeManagementSystem/` |
+| 4    | Check directory contents                                 | `dir`                                                |
+| 5    | Build the application into a JAR file                    | `mvn clean install`                                  |
+| 6    | Confirm the JAR file was created                         | `ls target`                                          |
+| 7    | Create a Dockerfile                                      | `vi Dockerfile`                                      |
+| 8    | Enter insert mode and paste the Dockerfile content below | press `i` in vi                                      |
+| 9    | Build the Docker image                                   | `docker build -t myapp .`                            |
+| 10   | Verify the image was created                             | `docker images`                                      |
+
+### Dockerfile content (Step 8):
+
+```dockerfile
+# Step 1: Use an official base image (OpenJDK 17)
+# for x86_64 architecture
+FROM openjdk:17-jdk-alpine
+
+# for ARM64 architecture
+#FROM --platform=linux/arm64 eclipse-temurin:17-jdk
+
+# Step 2: Copy your JAR file into the container
+COPY target/*.jar app.jar
+
+# Step 3: Expose the port your app runs on
+EXPOSE 8081
+
+# Step 4: Run the application
+CMD ["java", "-jar", "/app.jar"]
+```
+
+---
+
+## Activity 2: Tag, List and Delete an Image
+
+| Step | Description                          | Command                              |
+| ---- | ------------------------------------ | ------------------------------------ |
+| 1    | List existing images                 | `docker images`                      |
+| 2    | Tag an existing image                | `docker tag myapp:latest myapp:v1.0` |
+| 3    | List images again to confirm the tag | `docker images`                      |
+| 4    | Remove the tagged image              | `docker rmi myapp:v1.0`              |
+| 5    | List images again to confirm removal | `docker images`                      |
+
+---
+
+## Activity 3: Create a Docker Container
+
+### How to create a container — step by step:
+
+| Step | Description                                                                                | Command                                                          |
+| ---- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| 1    | Verify Docker is installed                                                                 | `docker --version`                                               |
+| 2    | Check available images (you need an image before you can create a container)               | `docker images`                                                  |
+| 3    | Create a container from an image — general syntax                                          | `docker run [OPTIONS] IMAGE_NAME`                                |
+| 4    | Create and run a container (example: Spring Boot app), giving it a name and mapping a port | `docker run -d -p 8081:8081 --name springboot-app myapp:latest`  |
+| 5    | Verify the container was created and is running                                            | `docker ps`                                                      |
+| 6    | Access the application in a browser                                                        | `http://localhost:8081` (local) or `http://PUBLIC-IP:8081` (EC2) |
+
+### Explanation of flags used above:
+
+* `-d` → run in background (detached mode)
+* `-p` → port mapping (host:container)
+* `--name` → assign a name to the container
+
+### `docker create` vs `docker run` (two ways to "create" a container):
+
+| Command                                             | What it does                                                          |
+| --------------------------------------------------- | --------------------------------------------------------------------- |
+| `docker create --name myapp-container myapp:latest` | Creates the container but does **not** start it                       |
+| `docker start myapp-container`                      | Starts the container created above                                    |
+| `docker run --name myapp-container myapp:latest`    | Creates **and** starts the container in one step (most commonly used) |
+
+### Example — Run MySQL image to create a MySQL container:
+
+| Step | Description                                     | Command                                                                                                                                     |
+| ---- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3a   | Run the MySQL image to create a MySQL container | `docker run -d --name sb-mysql-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=root mysql:8.0` |
+
+### Command breakdown:
+
+* `docker run` → creates and starts a new MySQL container
+* `-d` → runs the container in detached mode (in the background)
+* `--name sb-mysql-db` → assigns the container the name `sb-mysql-db`
+* `-e MYSQL_ROOT_PASSWORD=root` → sets the root password for MySQL (`root`)
+* `-e MYSQL_DATABASE=mydb` → creates a database named `mydb`
+* `-e MYSQL_USER=myuser` → creates a new user (`myuser`)
+* `-e MYSQL_PASSWORD=root` → sets the password for `myuser` (`root`)
+
+### Example — Nginx container:
+
+```text
+docker pull nginx:latest
+docker run -d --name nginx-server -p 8080:80 nginx:latest
+docker ps
+```
+
+### Container management commands:
+
+| Action                | Command                               |
+| --------------------- | ------------------------------------- |
+| Start container       | `docker start springboot-app`         |
+| Stop container        | `docker stop springboot-app`          |
+| Restart container     | `docker restart springboot-app`       |
+| View logs             | `docker logs springboot-app`          |
+| Enter container shell | `docker exec -it springboot-app bash` |
+| Remove container      | `docker rm -f springboot-app`         |
+
+---
+
+## Activity 4: Pull Images from Docker Hub Repository
+
+| Step | Description                              | Command                                           |
+| ---- | ---------------------------------------- | ------------------------------------------------- |
+| 1    | Verify Docker installation               | `docker --version`                                |
+| 2    | Check existing local images              | `docker images`                                   |
+| 3    | Log in to Docker Hub (optional)          | `docker login`                                    |
+| 4    | Search for an image on Docker Hub        | e.g. `mysql`, `nginx`, `redis`, `ubuntu`, `mongo` |
+| 5    | Pull an image from Docker Hub — syntax   | `docker pull image-name:tag`                      |
+| 5a   | Example: pull MySQL 8.0                  | `docker pull mysql:8.0`                           |
+| 5b   | Example: pull latest Nginx               | `docker pull nginx:latest`                        |
+| 5c   | Example: pull Ubuntu 22.04               | `docker pull ubuntu:22.04`                        |
+| 6    | Verify the downloaded image              | `docker images`                                   |
+| 7    | Create a container from the pulled image | `docker run -d --name mysql-db mysql:8.0`         |
+| 8    | Check running containers                 | `docker ps`                                       |
+
+### Complete flow:
+
+```text
+docker --version
+docker login
+docker pull mysql:8.0
+docker images
+docker run mysql:8.0
+docker ps
+```
+
+---
+
+## Activity 5: List, Pause, Unpause, Stop, Start and Remove a Container
+
+| Step | Description                       | Command                                                           |
+| ---- | --------------------------------- | ----------------------------------------------------------------- |
+| 1    | List currently running containers | `docker ps`                                                       |
+| 2    | Pause the container               | `docker pause <container-id>/<container-name>` then `docker ps`   |
+| 3    | Unpause the container             | `docker unpause <container-id>/<container-name>` then `docker ps` |
+| 4    | Stop the container                | `docker stop <container-id>/<container-name>` then `docker ps`    |
+| 5    | Start the container               | `docker start <container-id>/<container-name>` then `docker ps`   |
+| 6    | Remove the container              | `docker rm -f <container-id>/<container-name>` then `docker ps`   |
+
+---
+
+## Activity 6: MySQL Container — Create Database and Table
+
+| Step | Description                                   | Command                                                                                                                                  |
+| ---- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | Pull the MySQL 8.0 image                      | `docker pull mysql:8.0`                                                                                                                  |
+| 2    | Check available images                        | `docker images`                                                                                                                          |
+| 3    | Run the MySQL image to create a container     | `docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=root mysql:8.0` |
+| 4    | Verify the container is running               | `docker ps`                                                                                                                              |
+| 5    | Access the MySQL database                     | `docker exec -it mysql-db mysql -u myuser -p`                                                                                            |
+| 6    | List databases                                | `show databases;`                                                                                                                        |
+| 7    | Switch to the database                        | `use mydb;`                                                                                                                              |
+| 8    | Create the employee table                     | `create table employee(employeeId int, employeeName varchar(255), salary int);`                                                          |
+| 9    | Insert data into the table                    | `insert into employee values(1001, 'John', 1000), (1002, 'jack', 2000);`                                                                 |
+| 10   | View the records                              | `select * from employee;`                                                                                                                |
+| —    | Exit the MySQL client                         | `exit;`                                                                                                                                  |
+| 11   | Remove the MySQL container                    | `docker rm -f mysql-db`                                                                                                                  |
+| 12   | Recreate the container using the same command | *(repeat step 3)*                                                                                                                        |
+| 13   | Access the MySQL client again                 | `docker exec -it mysql-db mysql -u myuser -p`                                                                                            |
+| 14   | List databases                                | `show databases;`                                                                                                                        |
+| 15   | Switch to the database                        | `use mydb;`                                                                                                                              |
+| 16   | List all tables                               | `show tables;`                                                                                                                           |
+
+> **Note:** Without a volume, the table created in step 8 will **not** exist after step 11–12 (removing and recreating the container), since the data was stored only inside the deleted container. This is demonstrated in Activity 7.
+
+---
+
+## Activity 7: Create and Mount a Volume
+
+| Step | Description                                                 | Command                                                                                                                                                               |
+| ---- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | Create a Docker volume                                      | `docker volume create mysql-data`                                                                                                                                     |
+| 2    | Stop/remove the existing MySQL container                    | `docker rm -f mysql-db`                                                                                                                                               |
+| 3    | Run a MySQL container attached to the volume                | `docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=root -v mysql-data:/var/lib/mysql mysql:8.0` |
+| 4    | Verify the volume is mounted correctly                      | `docker inspect mysql-db`                                                                                                                                             |
+| 5    | Access the MySQL client to add data                         | `docker exec -it mysql-db mysql -u myuser -p`                                                                                                                         |
+| 6    | List databases                                              | `show databases;`                                                                                                                                                     |
+| 7    | Switch to the database                                      | `use mydb;`                                                                                                                                                           |
+| 8    | Create the employee table                                   | `create table employee(employeeId int, employeeName varchar(255), salary int);`                                                                                       |
+| 9    | Insert data into the table                                  | `insert into employee values(1001, 'John', 1000), (1002, 'jack', 2000);`                                                                                              |
+| 10   | View the records                                            | `select * from employee;`                                                                                                                                             |
+| 11   | Remove the MySQL container                                  | `docker rm -f mysql-db`                                                                                                                                               |
+| 12   | Recreate the container using the same command (same volume) | *(repeat step 3)*                                                                                                                                                     |
+| 13   | Access the MySQL client inside the container                | `docker exec -it mysql-db mysql -u myuser -p`                                                                                                                         |
+| 14   | List databases                                              | `show databases;`                                                                                                                                                     |
+| 15   | Switch to the database                                      | `use mydb;`                                                                                                                                                           |
+| 16   | List all tables                                             | `show tables;`                                                                                                                                                        |
+| 17   | Select data from the employee table                         | `select * from employee;`                                                                                                                                             |
+
+> **Result:** Because the volume `mysql-data` is mounted at `/var/lib/mysql`, the `employee` table and its data **survive** container removal and recreation — unlike Activity 6.
+
+---
+
+## Volume Command Reference
+
+| Action         | Command                            |
+| -------------- | ---------------------------------- |
+| Create volume  | `docker volume create mysql-data`  |
+| List volumes   | `docker volume ls`                 |
+| Inspect volume | `docker volume inspect mysql-data` |
+| Remove volume  | `docker volume rm mysql-data`      |
+
+---
+
+## Spring Boot Volume Example
+
+|                | Command                                                                       | Result                                           |
+| -------------- | ----------------------------------------------------------------------------- | ------------------------------------------------ |
+| Without volume | `docker run -d --name app -p 8081:8081 myapp:latest`                          | Uploaded files are lost after container deletion |
+| With volume    | `docker run -d --name app -p 8081:8081 -v app-data:/app/uploads myapp:latest` | Uploaded files remain safe                       |

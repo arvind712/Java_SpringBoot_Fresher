@@ -1,0 +1,1564 @@
+docker
+
+
+Activity 1
+ 
+ 
+Create Image
+ 
+1. check version of Docker
+ 
+command: docker --version
+ 
+ 
+2. Check containers
+ 
+command: docker ps
+ 
+ 
+4. change the directory
+ 
+command:cd  /home/lkmuser/Desktop/EmployeeManagementSystem/
+ 
+5. check directories
+ 
+command: dir
+ 
+6. Create jar file of application
+ 
+command mvn clean install
+ 
+7. Check jar file is created
+ 
+command: ls target
+ 
+8. Create Docker file
+ 
+command: vi Dockerfile
+ 
+9. Paste content in Vi editor after pressing i
+ 
+ 
+Creating docker file to dockerize simple spring boot application:  
+ 
+ 
+# Step 1: Use an official base image (OpenJDK 17)
+ 
+#for x86_64 architecture
+ 
+FROM openjdk:17-jdk-alpine
+ 
+ 
+#for ARM64 architecture
+ 
+#FROM --platform=linux/arm64 eclipse-temurin:17-jdk
+ 
+ 
+# Step 2: Copy your JAR file into the container
+ 
+COPY target/*.jar app.jar
+ 
+ 
+# Step 3: Expose the port your app runs on
+ 
+EXPOSE 8081
+ 
+ 
+# Step 4: Run the application
+ 
+CMD ["java", "-jar", "/app.jar"]
+ 
+ 
+10. create docker image
+ 
+command: docker build -t myapp .
+ 
+ 
+11. check the images
+ 
+command: docker images
+
+
+
+
+
+Activity 2
+ 
+ 
+Tag, List and Delete Image
+ 
+ 
+1. List existing images
+ 
+docker images
+ 
+2. Tag an existing image
+ 
+docker tag myapp:latest myapp:v1.0
+ 
+ 
+3. List again existing images
+ 
+docker images
+ 
+4. remove existing images
+ 
+docker rmi myapp:v1.0
+ 
+5. List again existing images
+ 
+docker images
+
+
+
+
+
+
+
+
+======================================================
+ 
+ 
+Pull Images from Docker Hub Repository
+ 
+ 
+=======================================================
+ 
+ 
+ 
+Step 1 ===== Verify Docker Installation
+ 
+docker --version
+ 
+ 
+Step 2 ===== Check Existing Local Images
+ 
+docker images
+ 
+ 
+Step 3 ===== Login to Docker Hub (Optional)
+ 
+docker login
+ 
+ 
+Step 4 ===== Search Image on Docker Hub
+ 
+Examples:
+mysql
+nginx
+redis
+ubuntu
+mongo
+ 
+ 
+Step 5 ===== Pull Image from Docker Hub
+ 
+Syntax:
+ 
+docker pull image-name:tag
+ 
+ 
+Examples:
+ 
+docker pull mysql:8.0
+ 
+docker pull nginx:latest
+ 
+docker pull ubuntu:22.04
+ 
+ 
+Step 6 ===== Verify Downloaded Image
+ 
+docker images
+ 
+ 
+Step 7 ===== Create Container from Pulled Image
+ 
+docker run -d --name mysql-db mysql:8.0
+ 
+Check Running Containers
+ 
+docker ps
+
+
+=================================
+Complete Flow
+=================================
+ 
+Install Docker
+docker --version
+docker login
+docker pull mysql:8.0
+docker images
+docker run mysql:8.0
+docker ps
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Activity 5
+ 
+ 
+List, pause, unpause, stop, start and remove container
+ 
+ 
+1. List the current Running containers
+ 
+docker ps
+ 
+ 
+2. pause the container
+ 
+docker pause <container-id>/<container-name>
+docker ps
+ 
+ 
+3.Unpause the container
+ 
+docker unpause <container-id>/<container-name>
+ 
+docker ps
+ 
+ 
+4. stop the container
+docker stop <container-id>/<container-name>
+docker ps
+ 
+ 
+5. start the container
+ 
+docker start <container-id>/<container-name>
+docker ps
+ 
+ 
+6. remove the container
+ 
+docker rm -f <container-id>/<container-name>
+docker ps
+ 
+ 
+-----------------
+ 
+---------------------------------------------------------------------
+
+Activity 6
+ 
+ 
+1. create MySQL :8.0 version image
+ 
+docker pull MySQL:8.0
+ 
+ 
+2. check the images
+docker images
+ 
+ 
+3. Run MySQL image to create MySQL container
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=root mysql:8.0
+ 
+ 
+4. verify MySQL container is running
+ 
+docker ps
+ 
+ 
+5. access MySQL database
+ 
+docker exec -it mysql-db mysql -u myuser -p
+ 
+ 
+6. List Databases
+ 
+show databases;
+ 
+ 
+7. use database
+use mydb;
+ 
+ 
+8. Create Employee table and insert data into table
+ 
+create table employee(employeeId int, employeeName varchar(255), salary int);
+ 
+ 
+9. Insert data into table
+ 
+insert into employee values((1001, 'John', 1000), (1002, 'jack',2000));
+ 
+ 
+10. see the record
+ 
+select * from employee;
+ 
+exit from mysql: exit;
+ 
+ 
+11. remove mysql container
+ 
+docker rm -f mysql-db
+ 
+ 
+12. recreate container using same command
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=root mysql:8.0
+ 
+ 
+13. Access mysql client inside container
+ 
+docker exec -it mysql-db mysql -u myuser -p
+ 
+ 
+14. see databases
+ 
+show databases;
+ 
+ 
+15. use database
+use mydb
+ 
+ 
+16. see all tables
+ 
+show tables;
+ 
+----------------------------------------------------------------------------------------------------------------------------------
+
+Activity 7
+====================
+ 
+ 
+Create and Mount volume
+ 
+ 
+1. Create Docker volume
+docker volume create mysql-data
+ 
+ 
+2. Stop or remove MySQL container
+ 
+docker rm -f mysql-db
+ 
+ 
+3. Run MySQL container and attach it to volume
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=root -v mysql-data:/var/lib/mysql  mysql:8.0
+ 
+ 
+4. verify volume is mounted correctly
+ 
+docker inspect mysql-db
+ 
+ 
+5. Add data to volume
+ 
+docker exec -it mysql-db mysql -u myuser -p
+ 
+ 
+6. List Databases
+ 
+show databases;
+ 
+ 
+7. use database
+use mydb;
+ 
+ 
+8. Create Employee table and insert data into table
+ 
+create table employee(employeeId int, employeeName varchar(255), salary int);
+ 
+ 
+9. Insert data into table
+ 
+insert into employee(1001, 'John', 1000), (1002, 'jack',2000);
+ 
+ 
+10. see the record
+ 
+select * from employee;
+ 
+ 
+11. remove mysql container
+ 
+docker rm -f mysql-db
+ 
+ 
+12. recreate container using same command
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=root -v mysql-data:/var/lib/mysql  mysql:8.0
+ 
+ 
+13. Access mysql client inside container
+ 
+docker exec -it sb-mysql-db mysql -u myuser -p
+ 
+ 
+14. see databases
+ 
+show databases;
+ 
+ 
+15. use database
+use mydb
+ 
+ 
+16. see all tables
+ 
+show tables;
+ 
+ 
+17. select data from employee table
+ 
+select * from employee
+ 
+------------------------
+---------------------------------------------------------------------------------------------------------
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+docker volume
+
+ 
+==================================================
+
+DOCKER CONTAINER WITH VOLUME VS WITHOUT VOLUME
+
+==================================================
+ 
+ 
+INTRODUCTION
+
+=================================
+ 
+Docker Container stores application files, logs and database data.
+ 
+There are two ways:
+ 
+1 ===== Without Volume
+
+2 ===== With Volume
+ 
+ 
+ 
+=================================
+
+WITHOUT VOLUME
+
+=================================
+ 
+Create Container:
+ 
+Docker pull mysql:8.0
+ 
+Docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root mysql:8.0
+ 
+ 
+What Happens?
+ 
+Data is stored inside container.
+ 
+ 
+Examples:
+ 
+Database Tables
+
+Employee Records
+
+Logs
+
+Uploaded Files
+ 
+ 
+ 
+=================================
+
+PROBLEM WITHOUT VOLUME
+
+=================================
+ 
+Create Table:
+ 
+ 
+CREATE TABLE employee(
+
+id INT,
+
+name VARCHAR(50)
+
+);
+ 
+ 
+Insert Record:
+ 
+INSERT INTO employee VALUES(1,'Sunil');
+ 
+ 
+Delete Container:
+ 
+docker rm -f mysql-db
+ 
+ 
+Create Container Again:
+ 
+docker run -d --name mysql-db mysql:8.0
+ 
+ 
+Result:
+ 
+Employee Table Missing
+
+Data Lost
+ 
+ 
+ 
+ 
+=================================
+
+WITH VOLUME
+
+=================================
+ 
+Step 1 ===== Create Volume
+ 
+Command:
+ 
+docker volume create mysql-data
+ 
+ 
+Verify:
+ 
+docker volume ls
+ 
+ 
+Step 2 ===== Attach Volume
+ 
+Command:
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -v mysql-data:/var/lib/mysql mysql:8.0
+ 
+ 
+ 
+=================================
+
+HOW VOLUME WORKS
+
+=================================
+ 
+ 
+Container ===== Temporary
+ 
+Volume ===== Permanent Storage
+ 
+Database Files ===== Stored in Volume
+ 
+Container Removed ===== Data Safe
+ 
+ 
+ 
+ 
+=================================
+
+  MYSQL EXAMPLE
+
+=================================
+ 
+ 
+Create Volume:
+ 
+docker volume create mysql-data
+ 
+ 
+Run Container:
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=root -v mysql-data:/var/lib/mysql mysql:8.0
+ 
+ 
+Create Table and Insert Data.
+ 
+ 
+Delete Container:
+ 
+docker rm -f mysql-db
+ 
+ 
+Recreate Container:
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -v mysql-data:/var/lib/mysql mysql:8.0
+ 
+ 
+Result:
+ 
+Data Still Available
+ 
+ 
+ 
+ 
+=================================
+
+SPRING BOOT EXAMPLE
+
+=================================
+ 
+ 
+WITHOUT VOLUME
+ 
+Docker run -d --name app -p 8081:8081 myapp:latest
+ 
+Uploaded Files Lost After Container Deletion.
+ 
+ 
+WITH VOLUME
+ 
+Docker run -d --name app -p 8081:8081 -v app-data:/app/uploads myapp:latest
+ 
+Uploaded Files Remain Safe.
+ 
+ 
+ 
+=================================
+
+COMMANDS
+
+=================================
+ 
+Create Volume
+ 
+docker volume create mysql-data
+ 
+ 
+List Volumes
+ 
+docker volume ls
+ 
+ 
+Inspect Volume
+ 
+docker volume inspect mysql-data
+ 
+ 
+Remove Volume
+ 
+docker volume rm mysql-data
+ 
+ 
+=====================================================================
+ 
+ 
+Q1: Why use Docker Volume?
+ 
+Answer:
+ 
+Volume provides persistent storage.
+ 
+ 
+Q2: What happens if container is deleted?
+ 
+Without Volume ===== Data Deleted
+ 
+With Volume ===== Data Retained
+ 
+ 
+Q3: Where is MySQL data stored?
+ 
+Without Volume ===== Container Filesystem
+ 
+With Volume ===== Docker Volume
+ 
+ 
+Without Volume ===== Container Deleted = Data Deleted
+ 
+With Volume ===== Container Deleted = Data Safe
+
+ 
+==================================================================================================================================
+ 
+DOCKER ARCHITECTURE  
+
+=====================
+ 
+ 
+What Is Docker?
+
+===============
+ 
+Docker
+
+=====
+
+A Platform To Build
+ 
+ 
+=====
+
+Ship
+
+=====
+
+Run Applications Inside Containers
+ 
+ 
+ 
+Application
+
+=====
+ 
+Code + Dependencies + Configuration
+ 
+ 
+ 
+Container
+
+=====
+
+Package Everything Together***************************************
+ 
+ 
+ 
+ 
+Docker Architecture
+
+===================
+ 
+ 
+Docker Client
+
+     |
+
+     |
+
+Docker Daemon
+
+     |
+
+---------------------------------
+
+|         |         |           |
+
+Images  Containers Networks  Volumes
+
+     |
+
+Docker Registry
+ 
+ 
+ 
+ 
+1. Docker Client
+
+================
+ 
+ 
+Docker Client
+
+=====
+
+User Interface
+ 
+ 
+Examples
+
+========
+ 
+docker build
+ 
+docker run
+ 
+docker ps
+ 
+docker stop
+ 
+ 
+When user executes:
+ 
+docker run nginx
+ 
+Docker Client sends request to Docker Daemon.
+ 
+ 
+ 
+ 
+2. Docker Daemon (dockerd)
+
+==========================
+ 
+ 
+Docker Daemon
+
+=====
+
+Brain Of Docker
+ 
+ 
+Responsibilities
+
+================
+ 
+Create Containers
+
+=====
+
+Start Containers
+
+=====
+
+Stop Containers
+
+=====
+
+Build Images
+
+=====
+
+Manage Networks
+
+=====
+
+Manage Volumes
+ 
+ 
+ 
+3. Docker Image
+
+===============
+ 
+ 
+Docker Image
+
+=====
+
+Blueprint
+ 
+ 
+ 
+Class
+
+=====
+
+Image
+ 
+ 
+Object
+
+=====
+
+Container
+ 
+ 
+Example
+
+=======
+ 
+docker pull nginx
+ 
+Downloads nginx image.
+ 
+ 
+ 
+ 
+ 
+4. Docker Container
+
+===================
+ 
+Docker Container
+
+=====
+
+Running Instance Of Image
+ 
+ 
+Example
+
+=======
+
+docker run nginx
+ 
+Result
+
+======
+
+nginx Image
+
+=====
+
+nginx Container Running
+ 
+ 
+ 
+ 
+5. Docker Registry
+
+==================
+ 
+ 
+Docker Registry
+
+=====
+
+Image Repository
+ 
+ 
+ 
+Examples
+
+========
+ 
+Docker Hub
+
+=====
+
+Public Registry
+ 
+ 
+AWS ECR
+
+=====
+
+Private Registry
+ 
+ 
+Azure Container Registry
+
+=====
+
+Private Registry
+ 
+ 
+ 
+ 
+Commands
+
+========
+ 
+docker pull nginx
+ 
+docker push myapp:v1
+ 
+ 
+ 
+ 
+6. Docker Volume
+
+================
+ 
+Docker Volume
+
+=====
+
+Persistent Storage
+ 
+ 
+Problem
+
+=======
+
+Container Deleted
+
+=====
+
+Data Lost
+ 
+ 
+Solution
+
+========
+ 
+Volume
+
+=====
+
+Data Stored Outside Container
+ 
+ 
+Examples
+
+========
+ 
+MySQL Data
+
+=====
+
+Volume
+ 
+MongoDB Data
+
+=====
+
+Volume
+ 
+ 
+ 
+ 
+7. Docker Network
+
+=================
+ 
+ 
+Docker Network
+
+=====
+ 
+Communication Layer
+ 
+ 
+Frontend Container
+
+=====
+
+Backend Container
+
+=====
+
+Database Container
+ 
+ 
+Network Allows Containers To Communicate.
+ 
+ 
+ 
+ 
+  Spring Boot Flow
+
+==========================
+ 
+ 
+Spring Boot Application
+
+=====
+ 
+Create Dockerfile
+ 
+ 
+Docker Build
+
+=====
+
+Create Image
+ 
+ 
+Docker Run
+
+=====
+
+Create Container
+ 
+ 
+Docker Hub
+
+=====
+
+Store Image
+ 
+ 
+Kubernetes
+
+=====
+
+Deploy Containers
+ 
+ 
+ 
+ 
+ 
+ 
+Useful Commands
+
+===============
+ 
+ 
+Build Image
+
+=====
+
+docker build -t employee-app .
+ 
+ 
+List Images
+
+=====
+
+docker images
+ 
+ 
+Run Container
+
+=====
+
+docker run -p 8080:8080 employee-app
+ 
+ 
+Running Containers
+
+=====
+
+docker ps
+ 
+ 
+Stop Container
+
+=====
+
+docker stop container_id
+ 
+ 
+ 
+ 
+Virtual Machine
+
+=====
+
+Has Full Operating System
+ 
+ 
+Docker Container
+
+=====
+
+Shares Host Operating System Kernel
+ 
+ 
+Benefits
+
+========
+
+Fast Startup
+
+=====
+
+Less Memory
+
+=====
+
+Less CPU
+
+=====
+
+Lightweight
+ 
+ 
+ 
+ 
+Docker Client
+
+=====
+
+Manager
+ 
+Docker Daemon
+
+=====
+
+Worker
+ 
+Docker Image
+
+=====
+
+Blueprint
+ 
+Docker Container
+
+=====
+
+Running House
+ 
+Docker Hub
+
+=====
+
+Warehouse
+ 
+ 
+============================================================================================================================
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Container:======================================================================================
+ 
+ 
+=================================
+
+CREATE DOCKER CONTAINER
+
+=================================
+ 
+ 
+Step 1 ===== Verify Docker Installation
+ 
+Docker should be installed.
+ 
+Command:
+ 
+docker --version
+ 
+ 
+=================================
+
+Step 2 ===== Check Available Images
+
+=================================
+ 
+ 
+Command:
+ 
+docker images
+ 
+Example:
+ 
+mysql      8.0
+
+nginx      latest
+
+myapp      latest
+ 
+ 
+=================================
+
+Step 3 ===== Create Container
+
+=================================
+ 
+Syntax:
+ 
+docker run [OPTIONS] IMAGE_NAME
+ 
+Example:
+ 
+docker run -d myapp:latest
+ 
+ 
+ 
+===============================================
+
+Step 4 ===== Create Spring Boot Container
+
+===============================================
+ 
+Command:
+ 
+docker run -d -p 8081:8081 --name springboot-app myapp:latest
+ 
+Explanation:
+ 
+-d ===== Run in background
+ 
+-p ===== Port mapping
+ 
+--name ===== Container name
+ 
+myapp:latest ===== Docker image
+ 
+ 
+ 
+=================================
+
+Step 5 ===== Verify Running Container
+
+=================================
+ 
+Command:
+ 
+docker ps
+ 
+ 
+ 
+=================================
+
+Step 6 ===== Access Application
+
+=================================
+ 
+ 
+Local Machine:
+ 
+http://localhost:8081
+ 
+ 
+EC2 Server:
+ 
+http://PUBLIC-IP:8081
+ 
+ 
+=================================
+
+  Example ===== Nginx
+
+=================================
+ 
+docker pull nginx:latest
+ 
+docker run -d --name nginx-server -p 8080:80 nginx:latest
+ 
+docker ps
+ 
+ 
+=================================
+
+  Example ===== MySQL
+
+=================================
+ 
+docker pull mysql:8.0
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root mysql:8.0
+ 
+docker ps
+ 
+ 
+ 
+ 
+=================================
+
+Container Management Commands
+
+=================================
+ 
+ 
+Start Container
+ 
+docker start springboot-app
+ 
+ 
+Stop Container
+ 
+docker stop springboot-app
+ 
+ 
+Restart Container
+ 
+docker restart springboot-app
+ 
+ 
+View Logs
+ 
+docker logs springboot-app
+ 
+ 
+Enter Container
+ 
+docker exec -it springboot-app bash
+ 
+ 
+Remove Container
+ 
+docker rm -f springboot-app
+ 
+ 
+ 
+Docker Image ===== Blueprint
+ 
+Docker Container ===== Running Instance of Image
+ 
+ 
+ 
+m
+
+=================================
+
+Flow
+
+=================================
+ 
+ 
+docker pull mysql:8.0
+
+docker images
+
+docker run -d --name mysql-db mysql:8.0
+
+docker ps
+
+docker exec -it mysql-db bash
+
+docker stop mysql-db
+
+docker start mysql-db
+
+docker rm -f mysql-db
+ 
+ 
+ 
+ 
+Volumes:====================================================================================================
+ 
+ 
+=================================
+
+DOCKER WITH VOLUME VS WITHOUT VOLUME
+
+=================================
+ 
+ 
+WITHOUT VOLUME
+
+=================================
+ 
+docker run -d --name mysql-db mysql:8.0
+ 
+Data is stored inside the container.
+ 
+If container is deleted:
+ 
+docker rm -f mysql-db
+ 
+Result:
+
+Data is lost.
+ 
+ 
+=================================
+
+WITH VOLUME
+
+=================================
+ 
+Create Volume:
+ 
+docker volume create mysql-data
+ 
+Run Container:
+ 
+docker run -d --name mysql-db -v mysql-data:/var/lib/mysql mysql:8.0
+ 
+Result:
+
+Data is stored in volume.
+ 
+If container is deleted:
+ 
+docker rm -f mysql-db
+ 
+Data remains available.
+ 
+ 
+ 
+=================================
+
+COMPARISON
+
+=================================
+ 
+Without Volume ===== Data Deleted
+ 
+With Volume ===== Data Retained
+ 
+Container ===== Temporary
+ 
+Volume ===== Persistent Storage
+ 
+ 
+ 
+ 
+=================================
+
+REAL TIME MYSQL EXAMPLE
+
+=================================
+ 
+Create Volume:
+ 
+docker volume create mysql-data
+ 
+Run MySQL:
+ 
+docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=root -v mysql-data:/var/lib/mysql mysql:8.0
+ 
+ 
+ 
+============================================================================================================
+ 
+ 
+ 
+Why use Docker Volumes?
+ 
+Answer:
+
+Volumes provide persistent storage and prevent data loss when containers are deleted.
+ 
+ 
+ 
+ 

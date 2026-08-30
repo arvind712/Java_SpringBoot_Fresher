@@ -1,0 +1,3768 @@
+
+STEP 1 ===== VERIFY CLUSTER
+ 
+STEP 2 ===== VERIFY NODES
+ 
+STEP 3 ===== VERIFY EXISTING RESOURCES
+ 
+STEP 4 ===== CREATE OR MODIFY RESOURCE
+ 
+STEP 5 ===== APPLY CHANGES
+ 
+STEP 6 ===== VERIFY DEPLOYMENT
+ 
+STEP 7 ===== VERIFY PODS
+ 
+STEP 8 ===== VERIFY SERVICE
+ 
+STEP 9 ===== CHECK LOGS
+ 
+STEP 10 ===== ACCESS APPLICATION
+ 
+STEP 11 ===== VALIDATE FUNCTIONALITY
+ 
+STEP 12 ===== MONITOR RESOURCES
+ 
+STEP 13 ===== TROUBLESHOOT IF REQUIRED
+ 
+STEP 14 ===== CLEANUP
+
+==============================================================================================
+
+ 
+ 
+=========================================================
+ 
+KUBERNETES ARCHITECTURE  
+ 
+=========================================================
+ 
+ 
+ 
+1. WHY DO WE NEED KUBERNETES?
+
+=========================================================
+ 
+ 
+Suppose we have one Spring Boot application.
+ 
+Initially:
+ 
+    1 Application
+
+    1 Server
+
+    Few Users
+ 
+This is easy.
+ 
+But after some time:
+ 
+    More Users
+
+    More Microservices
+
+    More Containers
+
+    More Servers
+ 
+Now problems start:
+ 
+    Which server should run which application?
+ 
+    What if one container crashes?
+ 
+    Who will restart the failed container?
+ 
+    How to increase containers during high traffic?
+ 
+    How to reduce containers when traffic is low?
+ 
+    How to deploy new version without downtime?
+ 
+    How to distribute traffic between multiple containers?
+ 
+To solve these problems, we use Kubernetes.
+ 
+Simple meaning:
+ 
+    Kubernetes ===== Container Management System
+ 
+ 
+ 
+ 
+2. BIG PICTURE OF KUBERNETES ARCHITECTURE
+
+=========================================================
+ 
+ 
+Kubernetes architecture has two main parts:
+ 
+    1. Control Plane
+ 
+    2. Worker Nodes
+ 
+Simple understanding:
+ 
+    Control Plane ===== Brain Of Kubernetes
+ 
+    Worker Nodes ===== Machines Where Applications Run
+ 
+ 
+Basic Diagram:
+ 
+    Kubernetes Cluster
+ 
+        |
+
+        |
+
+        +====================================+
+
+        |                                    |
+
+        |                                    |
+
+        V                                    V
+ 
+    Control Plane                       Worker Nodes
+ 
+    Brain                               Application Servers
+ 
+ 
+ 
+ 
+ 
+3. WHAT IS KUBERNETES CLUSTER?
+
+=========================================================
+ 
+ 
+Cluster means group of machines managed together.
+ 
+Kubernetes Cluster means:
+ 
+    Complete Kubernetes Environment
+ 
+It contains:
+ 
+    Control Plane
+ 
+    Worker Nodes
+ 
+    Pods
+ 
+    Containers
+ 
+    Services
+ 
+    Deployments
+ 
+Simple definition:
+ 
+    Cluster ===== Full Kubernetes Setup
+ 
+ 
+ 
+ 
+4. CONTROL PLANE
+
+=========================================================
+ 
+ 
+Control Plane is the brain of Kubernetes.
+ 
+It does not normally run business applications.
+ 
+It manages the complete cluster.
+ 
+Control Plane responsibilities:
+ 
+    Accept user commands
+ 
+    Decide where Pods should run
+ 
+    Maintain cluster state
+ 
+    Monitor cluster health
+ 
+    Replace failed Pods
+ 
+    Manage scheduling
+ 
+Simple meaning:
+ 
+    Control Plane ===== Decision Maker
+ 
+ 
+Control Plane contains these main components:
+ 
+    API Server
+ 
+    ETCD
+ 
+    Scheduler
+ 
+    Controller Manager
+ 
+    Cloud Controller Manager
+ 
+ 
+ 
+ 
+5. API SERVER
+
+=========================================================
+ 
+ 
+API Server is the entry point of Kubernetes.
+ 
+Whenever we give any command, it first goes to API Server.
+ 
+Example command:
+ 
+    kubectl apply -f deployment.yaml
+ 
+This command goes to:
+ 
+    API Server
+ 
+Simple analogy:
+ 
+    API Server ===== Reception Desk
+ 
+In office, reception receives all requests first.
+ 
+In Kubernetes, API Server receives all requests first.
+ 
+Simple definition:
+ 
+    API Server ===== Entry Point Of Kubernetes
+ 
+ 
+ 
+ 
+6. ETCD
+
+=========================================================
+ 
+ 
+ETCD is the database of Kubernetes.
+ 
+It stores the current state of the cluster.
+ 
+ETCD stores details like:
+ 
+    Nodes
+ 
+    Pods
+ 
+    Services
+ 
+    Deployments
+ 
+    Configurations
+ 
+    Secrets Metadata
+ 
+    Cluster State
+ 
+Simple analogy:
+ 
+    ETCD ===== Memory Of Kubernetes
+ 
+If ETCD is lost, Kubernetes loses important cluster information.
+ 
+Simple definition:
+ 
+    ETCD ===== Kubernetes Database
+ 
+ 
+ 
+ 
+7. SCHEDULER
+
+=========================================================
+ 
+ 
+Scheduler decides where a Pod should run.
+ 
+Suppose we have 3 worker nodes:
+ 
+    Node 1
+ 
+    Node 2
+ 
+    Node 3
+ 
+Now a new Pod must be created.
+ 
+Scheduler checks:
+ 
+    Which node has free CPU?
+ 
+    Which node has free memory?
+ 
+    Which node is healthy?
+ 
+    Which node is suitable for this Pod?
+ 
+Then it assigns the Pod to the best node.
+ 
+Simple analogy:
+ 
+    Scheduler ===== Class Teacher
+ 
+Teacher decides which student sits on which bench.
+ 
+Scheduler decides which Pod runs on which Node.
+ 
+Simple definition:
+ 
+    Scheduler ===== Assigns Pods To Nodes
+ 
+ 
+ 
+ 
+8. CONTROLLER MANAGER
+
+=========================================================
+ 
+ 
+Controller Manager makes sure the desired state is always maintained.
+ 
+Example:
+ 
+    Desired State ===== 3 Pods Should Run
+ 
+Current State:
+ 
+    Pod 1 Running
+ 
+    Pod 2 Running
+ 
+    Pod 3 Crashed
+ 
+Controller Manager notices:
+ 
+    Expected Pods ===== 3
+ 
+    Actual Pods ===== 2
+ 
+Then it creates a new Pod.
+ 
+Simple analogy:
+ 
+    Controller Manager ===== Supervisor
+ 
+Supervisor checks whether work is happening as expected.
+ 
+Simple definition:
+ 
+    Controller Manager ===== Maintains Desired State
+ 
+ 
+ 
+ 
+9. CLOUD CONTROLLER MANAGER
+
+=========================================================
+ 
+ 
+Cloud Controller Manager connects Kubernetes with cloud provider services.
+ 
+Example cloud providers:
+ 
+    AWS
+ 
+    Azure
+ 
+    Google Cloud
+ 
+In AWS, it helps Kubernetes work with services like:
+ 
+    Load Balancer
+ 
+    Storage
+ 
+    Nodes
+ 
+Simple meaning:
+ 
+    Cloud Controller Manager ===== Connects Kubernetes With Cloud Provider
+ 
+In EKS:
+ 
+    Kubernetes ===== Container Orchestration
+ 
+    AWS ===== Cloud Provider
+ 
+    Cloud Controller Manager ===== Bridge Between Kubernetes And AWS
+ 
+ 
+ 
+ 
+10. WORKER NODE
+
+=========================================================
+ 
+ 
+Worker Nodes are machines where actual applications run.
+ 
+In AWS EKS:
+ 
+    Worker Node ===== EC2 Instance
+ 
+In local setup:
+ 
+    Worker Node ===== Virtual Machine Or Physical Machine
+ 
+Worker Node runs:
+ 
+    Pods
+ 
+    Containers
+ 
+    Application Workloads
+ 
+Simple meaning:
+ 
+    Worker Node ===== Application Server
+ 
+ 
+ 
+ 
+11. COMPONENTS INSIDE WORKER NODE
+
+=========================================================
+ 
+ 
+Each Worker Node has important components:
+ 
+    Kubelet
+ 
+    Kube Proxy
+ 
+    Container Runtime
+ 
+    Pods
+ 
+ 
+ 
+12. KUBELET
+
+=========================================================
+ 
+ 
+Kubelet is an agent running on every Worker Node.
+ 
+It talks to the Control Plane.
+ 
+Kubelet responsibility:
+ 
+    Start Pods
+ 
+    Stop Pods
+ 
+    Monitor Pods
+ 
+    Report Node Health
+ 
+    Report Pod Health
+ 
+Simple analogy:
+ 
+    Kubelet ===== Local Manager On Each Node
+ 
+Control Plane gives instruction.
+ 
+Kubelet executes instruction on the node.
+ 
+Simple definition:
+ 
+    Kubelet ===== Agent That Runs Pods On Node
+ 
+ 
+ 
+ 
+13. KUBE PROXY
+
+=========================================================
+ 
+ 
+Kube Proxy handles networking inside Kubernetes.
+ 
+It helps traffic reach the correct Pod.
+ 
+Example:
+ 
+    User Request
+ 
+    =====
+ 
+    Service
+ 
+    =====
+ 
+    Correct Pod
+ 
+Kube Proxy helps in routing this traffic.
+ 
+Simple meaning:
+ 
+    Kube Proxy ===== Network Helper In Kubernetes
+ 
+ 
+ 
+ 
+14. CONTAINER RUNTIME
+
+=========================================================
+ 
+ 
+Container Runtime is responsible for running containers.
+ 
+Examples:
+ 
+    containerd
+ 
+    Docker Engine Older Setup
+ 
+Simple meaning:
+ 
+    Container Runtime ===== Software That Runs Containers
+ 
+Kubernetes does not directly run containers.
+ 
+Kubernetes asks Container Runtime to run containers.
+ 
+Simple flow:
+ 
+    Kubernetes
+ 
+    =====
+ 
+    Container Runtime
+ 
+    =====
+ 
+    Container Starts
+ 
+ 
+ 
+ 
+15. POD
+
+=========================================================
+ 
+ 
+Pod is the smallest deployable unit in Kubernetes.
+ 
+Simple meaning:
+ 
+    Pod ===== Wrapper Around Container
+ 
+Usually one Pod contains one container.
+ 
+Example:
+ 
+    Attendance Pod
+ 
+        =====
+ 
+    Attendance Container
+ 
+ 
+    Pod
+ 
+        |
+ 
+    Container
+ 
+ 
+Very important:
+ 
+    We do not directly deploy containers in Kubernetes.
+ 
+    We deploy Pods.
+ 
+ 
+ 
+ 
+16. CONTAINER
+
+=========================================================
+ 
+ 
+Container contains the actual application.
+ 
+Example:
+ 
+    Spring Boot Application
+ 
+    Angular Application
+ 
+    Node.js Application
+ 
+    Python Application
+ 
+Simple meaning:
+ 
+    Container ===== Running Application Package
+ 
+Docker creates container images.
+ 
+Kubernetes runs them inside Pods.
+ 
+ 
+ 
+ 
+17. DEPLOYMENT
+
+=========================================================
+ 
+ 
+Deployment tells Kubernetes how many copies of an application should run.
+ 
+Example:
+ 
+    Run 3 copies of Attendance Service
+ 
+This means Kubernetes will create:
+ 
+    Pod 1
+ 
+    Pod 2
+ 
+    Pod 3
+ 
+If one Pod fails, Deployment helps create another Pod.
+ 
+Simple meaning:
+ 
+    Deployment ===== Maintains Required Number Of Pods
+ 
+ 
+reference----------------------------
+ 
+ 
+Command 1:
+
+kubectl get deployments
+ 
+Sample Output:
+
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+
+nginx   1/1     1            1           25s
+ 
+Command 2:
+
+kubectl get rs
+ 
+Sample Output:
+
+NAME               DESIRED   CURRENT   READY   AGE
+
+nginx-54b9c68f67   1         1         1       25s
+ 
+Command 3:
+
+kubectl get pods
+ 
+Sample Output:
+
+NAME                     READY   STATUS    RESTARTS   AGE
+
+nginx-54b9c68f67-x7k2m   1/1     Running   0          25s
+ 
+Reason:
+
+Checks the Deployment, ReplicaSet, and Pod created for the application.
+ 
+ 
+ 
+ 
+18. REPLICA SET
+
+=========================================================
+ 
+ 
+ReplicaSet ensures required number of Pod replicas are running.
+ 
+Deployment manages ReplicaSet.
+ 
+ReplicaSet manages Pods.
+ 
+Simple flow:
+ 
+    Deployment
+ 
+    =====
+ 
+    ReplicaSet
+ 
+    =====
+ 
+    Pods
+ 
+Simple meaning:
+ 
+    ReplicaSet ===== Maintains Pod Copies
+ 
+ 
+ 
+ 
+19. SERVICE
+
+=========================================================
+ 
+ 
+Pods are temporary.
+ 
+Pod IP can change.
+ 
+Today Pod IP may be:
+ 
+    10.1.1.5
+ 
+Tomorrow new Pod IP may be:
+ 
+    10.1.1.20
+ 
+So users should not directly access Pod IP.
+ 
+Kubernetes provides Service.
+ 
+Service gives stable access to Pods.
+ 
+Simple meaning:
+ 
+    Service ===== Permanent Access Point For Pods
+ 
+ 
+ 
+ 
+20. INGRESS
+
+=========================================================
+ 
+ 
+Ingress manages external access to applications.
+ 
+Example:
+ 
+    attendance.company.com
+ 
+    payroll.company.com
+ 
+Ingress routes traffic to correct service.
+ 
+Simple flow:
+ 
+    User
+ 
+    =====
+ 
+    Ingress
+ 
+    =====
+ 
+    Service
+ 
+    =====
+ 
+    Pod
+ 
+Simple meaning:
+ 
+    Ingress ===== HTTP Routing To Services
+ 
+ 
+ 
+ 
+21. CONFIGMAP
+
+=========================================================
+ 
+ 
+ConfigMap stores configuration values.
+ 
+Example:
+ 
+    Application Name
+ 
+    Environment Name
+ 
+    Feature Flags
+ 
+    Non-sensitive configuration
+ 
+Simple meaning:
+ 
+    ConfigMap ===== Stores Normal Configuration
+ 
+ 
+ 
+ 
+22. SECRET
+
+=========================================================
+ 
+ 
+Secret stores sensitive information.
+ 
+Example:
+ 
+    Database Password
+ 
+    API Key
+ 
+    Token
+ 
+Simple meaning:
+ 
+    Secret ===== Stores Sensitive Configuration
+ 
+Important:
+ 
+    Passwords should not be hardcoded inside application code.
+ 
+ 
+ 
+ 
+23. NAMESPACE
+
+=========================================================
+ 
+ 
+Namespace is used to logically separate resources inside cluster.
+ 
+Example:
+ 
+    dev namespace
+ 
+    test namespace
+ 
+    prod namespace
+ 
+Simple meaning:
+ 
+    Namespace ===== Logical Folder Inside Kubernetes Cluster
+ 
+ 
+ 
+ 
+================================================================================================================================================
+ 
+ 
+ 
+ 
+24. COMPLETE KUBERNETES ARCHITECTURE DIAGRAM
+
+=========================================================
+ 
+ 
+Kubernetes Cluster
+ 
+    |
+
+    |
+
+    +====================================================+
+
+    |                                                    |
+
+    |                                                    |
+
+    V                                                    V
+ 
+Control Plane                                      Worker Nodes
+ 
+    |                                                    |
+
+    |                                                    |
+
+    ---- API Server                                    ---- Worker Node 1
+
+    |                                                         |
+
+    ---- ETCD                                          |      ---- Kubelet
+
+    |                                                   |      ---- Kube Proxy
+
+    ---- Scheduler                                     |      ---- Container Runtime
+
+    |                                                   |      ---- Pod
+
+    ---- Controller Manager                            |      ---- Pod
+
+    |                                                   |
+
+    ---- Cloud Controller Manager                      ---- Worker Node 2
+
+                                                              |
+
+                                                              ---- Kubelet
+
+                                                              ---- Kube Proxy
+
+                                                              ---- Container Runtime
+
+                                                              ---- Pod
+
+                                                              ---- Pod
+ 
+ 
+================================================================================================================================================
+ 
+ 
+ 
+25. APPLICATION REQUEST FLOW
+
+=========================================================
+ 
+ 
+Suppose user opens:
+ 
+    attendance.company.com
+ 
+ 
+Request flow:
+ 
+    User
+ 
+    =====
+ 
+    Load Balancer
+ 
+    =====
+ 
+    Ingress
+ 
+    =====
+ 
+    Service
+ 
+    =====
+ 
+    Pod
+ 
+    =====
+ 
+    Container
+ 
+    =====
+ 
+    Spring Boot Application
+ 
+Simple meaning:
+ 
+    User request finally reaches the application running inside container.
+ 
+ 
+ 
+================================================================================================================================================
+ 
+ 
+ 
+ 
+26. HOW KUBERNETES SELF HEALING WORKS
+
+=========================================================
+ 
+Deployment says:
+ 
+    3 Pods should run
+ 
+Current condition:
+ 
+    Pod 1 Running
+ 
+    Pod 2 Running
+ 
+    Pod 3 Crashed
+ 
+Controller Manager checks:
+ 
+    Desired ===== 3 Pods
+ 
+    Actual ===== 2 Pods
+ 
+Kubernetes creates new Pod.
+ 
+Final condition:
+ 
+    Pod 1 Running
+ 
+    Pod 2 Running
+ 
+    Pod 4 Running
+ 
+Simple meaning:
+ 
+    Self Healing ===== Kubernetes Automatically Replaces Failed Pods
+ 
+ 
+ 
+ 
+27. HOW KUBERNETES SCALING WORKS
+
+=========================================================
+ 
+ 
+Initially:
+ 
+    2 Pods
+ 
+Traffic increases.
+ 
+We scale to:
+ 
+    5 Pods
+ 
+Kubernetes creates more Pods.
+ 
+Traffic distributes across Pods.
+ 
+Simple meaning:
+ 
+    Scaling ===== Increasing Or Decreasing Number Of Pods
+ 
+ 
+ 
+ 
+28. HOW KUBERNETES DEPLOYMENT UPDATE WORKS
+
+=========================================================
+ 
+ 
+Old version:
+ 
+    Attendance Service V1
+ 
+New version:
+ 
+    Attendance Service V2
+ 
+Kubernetes can update gradually.
+ 
+Simple flow:
+ 
+    Create New Pod With V2
+ 
+    =====
+ 
+    Shift Traffic To New Pod
+ 
+    =====
+ 
+    Remove Old Pod With V1
+ 
+This is called:
+ 
+    Rolling Update
+ 
+Simple meaning:
+ 
+    Rolling Update ===== Deploy New Version Without Full Downtime
+ 
+ 
+ 
+================================================================================================================================================
+ 
+ 
+ 
+ 
+ 
+========================================================
+ 
+ 
+29. KUBERNETES ARCHITECTURE  SUMMARY
+ 
+ 
+=========================================================
+ 
+ 
+Cluster
+
+=====
+
+Complete Kubernetes Environment
+ 
+ 
+Control Plane
+
+=====
+
+Brain
+ 
+ 
+API Server
+
+=====
+
+Entry Point
+ 
+ 
+ETCD
+
+=====
+
+Database
+ 
+ 
+Scheduler
+
+=====
+
+Assigns Pods To Nodes
+ 
+ 
+Controller Manager
+
+=====
+
+Maintains Desired State
+ 
+ 
+Worker Node
+
+=====
+
+Server Where Application Runs
+ 
+ 
+Kubelet
+
+=====
+
+Node Agent
+ 
+ 
+Kube Proxy
+
+=====
+
+Network Helper
+ 
+ 
+Container Runtime
+
+=====
+
+Runs Containers
+ 
+ 
+Pod
+
+=====
+
+Wrapper Around Container
+ 
+ 
+Container
+
+=====
+
+Actual Application
+ 
+ 
+Deployment
+
+=====
+
+Maintains Required Pods
+ 
+ 
+Service
+
+=====
+
+Stable Access Point
+ 
+ 
+Ingress
+
+=====
+
+External HTTP Routing
+ 
+ 
+ConfigMap
+
+=====
+
+Normal Configuration
+ 
+ 
+Secret
+
+=====
+
+Sensitive Configuration
+ 
+ 
+Namespace
+
+=====
+
+Logical Separation
+ 
+ 
+ 
+ 
+ 
+ 
+30. KUBERNETES AND EKS CONNECTION
+
+=========================================================
+ 
+ 
+Kubernetes is the container orchestration platform.
+ 
+EKS is AWS managed Kubernetes service.
+ 
+In normal Kubernetes:
+ 
+    We manage Control Plane
+ 
+    We manage Worker Nodes
+ 
+    We manage upgrades
+ 
+    We manage availability
+ 
+ 
+In AWS EKS:
+ 
+    AWS manages Control Plane
+ 
+    We manage Worker Nodes and Applications
+ 
+ 
+Simple understanding:
+ 
+    Kubernetes ===== Container Management Platform
+ 
+    EKS ===== Kubernetes Managed By AWS
+ 
+ 
+ 
+ 
+ 
+31. IN SIMPLE Words
+ 
+ 
+==============================================================================================================================================
+ 
+ 
+Kubernetes architecture mainly contains Control Plane and Worker Nodes.
+ 
+Control Plane is the brain of Kubernetes and contains API Server, ETCD, Scheduler, and Controller Manager.
+ 
+Worker Nodes run the actual application Pods and contain Kubelet, Kube Proxy, and Container Runtime.
+ 
+Pods contain containers, and Services provide stable access to those Pods.
+ 
+ 
+ 
+ 
+32. VERY SHORT 
+
+=========================================================
+ 
+Kubernetes has two main parts:
+ 
+    Control Plane ===== Makes Decisions
+ 
+    Worker Nodes ===== Run Applications
+ 
+Control Plane manages the cluster.
+ 
+Worker Nodes run Pods and Containers.
+ 
+ 
+ 
+Final line:
+ 
+    Kubernetes manages containerized applications by using Control Plane for decisions and Worker Nodes for running applications.
+ 
+ 
+ 
+=========================================================
+
+END OF DOCUMENT
+
+=========================================================
+ 
+ 
+ 
+ 
+ 
+==============================================================================================
+ 
+ 
+=================================
+
+WHAT IS KUBERNETES?
+
+=================================
+ 
+ 
+Kubernetes (K8s) is a container orchestration platform.
+ 
+Docker Creates Containers.
+ 
+Kubernetes Manages Containers.
+ 
+Kubernetes deploys, scales, manages and monitors containerized applications.
+ 
+ 
+ 
+=================================
+
+WHY KUBERNETES?
+
+=================================
+ 
+Self Healing
+
+Scaling
+
+Load Balancing
+
+Rolling Updates
+
+High Availability
+ 
+ 
+ 
+=================================
+
+DOCKER VS KUBERNETES
+
+=================================
+ 
+ 
+Docker ===== Creates Container
+ 
+Kubernetes ===== Manages Containers
+ 
+ 
+ 
+ 
+=================================
+
+ARCHITECTURE
+
+=================================
+ 
+Master Node
+
+API Server
+
+Scheduler
+
+Controller Manager
+ 
+Worker Node
+
+Pods
+
+Containers
+ 
+ 
+ 
+=================================
+
+IMPORTANT TERMS
+
+=================================
+ 
+Cluster
+
+Node
+
+Pod
+
+Deployment
+
+Service
+
+Namespace
+
+ConfigMap
+
+Secret
+
+Volume
+
+Ingress
+ 
+ 
+ 
+============================================================================================================================
+ 
+ 
+=================================
+
+INSTALLATION
+
+=================================
+ 
+Install Docker
+
+Install kubectl
+
+Install Minikube
+ 
+Commands:
+ 
+kubectl version --client
+
+minikube version
+
+minikube start --driver=docker --force
+ 
+ 
+ 
+=================================
+
+VERIFY CLUSTER
+
+=================================
+ 
+kubectl get nodes
+ 
+ 
+=================================
+
+CREATE POD
+
+=================================
+ 
+kubectl run nginx --image=nginx --restart=Never
+ 
+kubectl get pods
+ 
+ 
+=================================
+
+DELETE POD
+
+=================================
+ 
+kubectl delete pod nginx
+ 
+ 
+=================================
+
+CREATE DEPLOYMENT
+
+=================================
+ 
+kubectl create deployment nginx --image=nginx:latest
+ 
+kubectl get deployments
+
+kubectl get pods
+ 
+ 
+=================================
+
+EXPOSE DEPLOYMENT
+
+=================================
+ 
+kubectl expose deployment nginx --type=LoadBalancer --port=80
+ 
+kubectl get services
+ 
+ 
+=================================
+
+MINIKUBE TUNNEL
+
+=================================
+ 
+minikube tunnel
+ 
+ 
+=================================
+
+VIEW LOGS
+
+=================================
+ 
+kubectl logs POD_NAME
+ 
+kubectl describe pod POD_NAME
+ 
+ 
+=================================
+
+SCALING
+
+=================================
+ 
+kubectl scale deployment nginx --replicas=3
+ 
+kubectl get pods
+ 
+ 
+=================================
+
+AUTOSCALING
+
+=================================
+ 
+kubectl autoscale deployment nginx --cpu-percent=50 --min=1 --max=10
+ 
+kubectl get hpa
+ 
+ 
+ 
+ 
+=================================================================================================================
+
+SPRING BOOT DEPLOYMENT
+
+=================================================================================================================
+ 
+mvn clean package
+ 
+docker build -t ems:dev .
+ 
+minikube image load ems:dev
+ 
+kubectl create deployment ems-app --image=ems:dev
+ 
+kubectl expose deployment ems-app --type=LoadBalancer --port=8081
+ 
+ 
+ 
+=================================
+
+YAML EXAMPLE
+
+=================================
+ 
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+
+  name: myapp
+
+spec:
+
+  replicas: 3
+ 
+ 
+ 
+============================================================================================================================
+ 
+ 
+Docker
+
+Minikube
+
+kubectl
+
+Pod
+
+Deployment
+
+Service
+
+Ingress
+
+ConfigMap
+
+Secret
+
+Volume
+
+Helm
+
+AKS
+
+EKS
+ 
+=============================================================================================================================
+ 
+ 
+FLOW
+ 
+ 
+NDRPSA
+
+===========
+ 
+ 
+N
+
+=====
+
+Node
+ 
+D
+
+=====
+
+Deployment
+ 
+R
+
+=====
+
+ReplicaSet
+ 
+P
+
+=====
+
+Pod
+ 
+S
+
+=====
+
+Service
+ 
+A
+
+=====
+
+Application
+ 
+ 
+ 
+==============================================================================================================================
+ 
+ 
+Steps To follow for any activity
+ 
+ 
+STEP 1 ===== VERIFY CLUSTER
+ 
+STEP 2 ===== VERIFY NODES
+ 
+STEP 3 ===== VERIFY EXISTING RESOURCES
+ 
+STEP 4 ===== CREATE OR MODIFY RESOURCE
+ 
+STEP 5 ===== APPLY CHANGES
+ 
+STEP 6 ===== VERIFY DEPLOYMENT
+ 
+STEP 7 ===== VERIFY PODS
+ 
+STEP 8 ===== VERIFY SERVICE
+ 
+STEP 9 ===== CHECK LOGS
+ 
+STEP 10 ===== ACCESS APPLICATION
+ 
+STEP 11 ===== VALIDATE FUNCTIONALITY
+ 
+STEP 12 ===== MONITOR RESOURCES
+ 
+STEP 13 ===== TROUBLESHOOT IF REQUIRED
+ 
+STEP 14 ===== CLEANUP
+ 
+ 
+================================================================================================================================
+ 
+ ==============================================================================================14 steps:
+
+================================================================================================
+ 
+ 
+STEP 1 ===== VERIFY CLUSTER
+ 
+Command:
+minikube status
+ 
+If Minikube is not running:
+minikube start
+ 
+Reason:
+Confirms that the local Kubernetes cluster is running before any resource is created or modified.
+ 
+ 
+===================================================================================================
+ 
+ 
+STEP 2 ===== VERIFY NODES
+ 
+Command:
+kubectl get nodes
+ 
+Reason:
+Confirms that Kubernetes nodes are available and Ready.
+ 
+Detailed command:
+kubectl get nodes -o wide
+ 
+ 
+========================================================================================
+ 
+ 
+STEP 3 ===== VERIFY EXISTING RESOURCES
+ 
+ 
+Command:
+kubectl get all
+ 
+Reason:
+Shows common resources currently present in the selected namespace, such as Pods, Services, Deployments and ReplicaSets.
+ 
+For all namespaces:
+kubectl get all -A
+ 
+Important:
+kubectl get all does not literally display every Kubernetes resource type. Query special resources separately when required.
+ 
+Examples:
+kubectl get configmaps
+kubectl get secrets
+kubectl get ingress
+kubectl get pvc
+kubectl get hpa
+ 
+ 
+=======================================================================================
+ 
+ 
+STEP 4 ===== CREATE OR MODIFY THE RESOURCE
+ 
+ 
+Possible activities:
+ 
+1. Create a Pod
+2. Create a Deployment
+3. Create a Service
+4. Edit a YAML manifest
+5. Change replica count
+6. Configure HPA
+7. Create ConfigMap or Secret
+8. Configure storage
+9. Configure Ingress
+ 
+Imperative example:
+kubectl create deployment <deployment-name> --image=<image-name>
+ 
+Declarative example:
+vi deployment.yml
+ 
+Reason:
+Defines the Kubernetes resource or changes its desired state.
+ 
+ 
+=======================================================================================
+ 
+ 
+STEP 5 ===== VALIDATE AND APPLY CHANGES
+ 
+ 
+Validate a YAML manifest:
+kubectl apply --dry-run=client -f <file-name>.yml
+ 
+Apply the manifest:
+kubectl apply -f <file-name>.yml
+ 
+Reason:
+The dry run detects many client-side manifest errors before submission. The apply command creates or updates the declared resources.
+ 
+If using an imperative command, execute the relevant kubectl create, run, expose, scale or autoscale command instead.
+ 
+ 
+=================================================================================
+ 
+ 
+STEP 6 ===== VERIFY DEPLOYMENT
+ 
+ 
+Command:
+kubectl get deployments
+ 
+For one Deployment:
+kubectl get deployment <deployment-name>
+ 
+Reason:
+Checks desired, ready, up-to-date and available replicas.
+ 
+Detailed command:
+kubectl describe deployment <deployment-name>
+ 
+After an update:
+kubectl rollout status deployment/<deployment-name>
+ 
+ 
+==============================================================================================
+ 
+ 
+STEP 7 ===== VERIFY PODS
+ 
+ 
+Command:
+kubectl get pods
+ 
+Detailed view:
+kubectl get pods -o wide
+ 
+Watch continuously:
+kubectl get pods -w
+ 
+Reason:
+Confirms that Pods are created, scheduled, running and ready.
+ 
+ 
+=============================================================================================
+ 
+ 
+STEP 8 ===== VERIFY SERVICE
+ 
+ 
+Command:
+kubectl get services
+ 
+Short form:
+kubectl get svc
+ 
+Detailed command:
+kubectl describe service <service-name>
+ 
+Reason:
+Confirms the Service type, Cluster IP, External IP and port mapping.
+ 
+For a Minikube LoadBalancer Service, use a separate terminal when required:
+minikube tunnel
+ 
+ 
+================================================================================
+ 
+ 
+STEP 9 ===== CHECK APPLICATION LOGS
+ 
+ 
+First get the Pod name:
+kubectl get pods
+ 
+Then check logs:
+kubectl logs <pod-name>
+ 
+For a particular container in a multi-container Pod:
+kubectl logs <pod-name> -c <container-name>
+ 
+Follow live logs:
+kubectl logs -f <pod-name>
+ 
+Reason:
+Shows application startup details, runtime output and errors.
+ 
+ 
+================================================================================
+ 
+ 
+STEP 10 ===== DESCRIBE THE RESOURCE
+ 
+ 
+Describe a Pod:
+kubectl describe pod <pod-name>
+ 
+Describe a Deployment:
+kubectl describe deployment <deployment-name>
+ 
+Describe a Service:
+kubectl describe service <service-name>
+ 
+Reason:
+Displays configuration, conditions and recent events. This is especially useful when a resource is Pending, failing or not reachable.
+ 
+ 
+===========================================================================
+ 
+ 
+STEP 11 ===== ACCESS THE APPLICATION
+ 
+ 
+Check the Service:
+kubectl get svc
+ 
+For LoadBalancer on Minikube, keep this running in another terminal:
+minikube tunnel
+ 
+Access using the actual external IP, port and endpoint:
+curl http://<EXTERNAL-IP>:<PORT>/<ENDPOINT>
+ 
+Alternative Minikube helper:
+minikube service <service-name> --url
+ 
+Reason:
+Validates that the deployed application can be reached through the Service.
+ 
+ 
+===========================================================================
+ 
+ 
+STEP 12 ===== MONITOR RESOURCES
+ 
+ 
+Commands:
+kubectl get all
+kubectl get pods -w
+kubectl get events --sort-by=.metadata.creationTimestamp
+ 
+When Metrics Server is available:
+kubectl top nodes
+kubectl top pods
+ 
+Reason:
+Observes resource changes, events, CPU usage and memory usage during the activity.
+ 
+Special activity checks:
+ 
+Scaling:
+kubectl get deployment <deployment-name>
+ 
+Autoscaling:
+kubectl get hpa
+ 
+Rollout:
+kubectl rollout status deployment/<deployment-name>
+ 
+Storage:
+kubectl get pv
+kubectl get pvc
+ 
+Ingress:
+kubectl get ingress
+ 
+ 
+=================================================================
+ 
+ 
+STEP 13 ===== TROUBLESHOOT IF REQUIRED
+ 
+ 
+General troubleshooting sequence:
+ 
+1. Check resource state:
+kubectl get all
+ 
+2. Check Pod details:
+kubectl describe pod <pod-name>
+ 
+3. Check application logs:
+kubectl logs <pod-name>
+ 
+4. Check Deployment details:
+kubectl describe deployment <deployment-name>
+ 
+5. Check Service and endpoints:
+kubectl describe service <service-name>
+kubectl get endpoints <service-name>
+ 
+6. Check recent events:
+kubectl get events --sort-by=.metadata.creationTimestamp
+ 
+7. Check resource usage when Metrics Server is available:
+kubectl top pods
+ 
+ 
+ 
+Common statuses to investigate:
+ 
+ 
+Pending
+=====
+Pod cannot be scheduled or is waiting for a required resource.
+ 
+ 
+ImagePullBackOff
+=====
+Kubernetes cannot obtain the container image.
+ 
+ 
+CrashLoopBackOff
+=====
+The container starts and repeatedly crashes.
+ 
+ 
+ContainerCreating
+=====
+Kubernetes is still preparing the container, image, network or storage.
+ 
+ 
+Service not reachable
+=====
+Verify selector, Pod labels, ports, targetPort, endpoints and application listening port.
+ 
+ 
+================================================================
+ 
+ 
+STEP 14 ===== CLEAN UP
+ 
+ 
+Delete resources created from a file:
+kubectl delete -f <file-name>.yml
+ 
+Delete a Pod:
+kubectl delete pod <pod-name>
+ 
+Delete a Deployment:
+kubectl delete deployment <deployment-name>
+ 
+Delete a Service:
+kubectl delete service <service-name>
+ 
+Delete an HPA:
+kubectl delete hpa <hpa-name>
+ 
+Verify cleanup:
+kubectl get all
+ 
+Reason:
+Removes training resources and avoids unnecessary resource consumption or naming conflicts in the next activity.
+ 
+Important:
+Delete only the resources created for the activity. Do not delete shared or required resources.
+ 
+ 
+=============================================================================
+ 
+ 
+ 
+minikube status
+ 
+kubectl get nodes
+ 
+kubectl get all
+ 
+kubectl apply --dry-run=client -f <file-name>.yml
+ 
+kubectl apply -f <file-name>.yml
+ 
+kubectl get deployments
+ 
+kubectl get pods
+ 
+kubectl get svc
+ 
+kubectl logs <pod-name>
+ 
+kubectl describe pod <pod-name>
+ 
+minikube tunnel
+curl http://<EXTERNAL-IP>:<PORT>/<ENDPOINT>
+ 
+kubectl get events --sort-by=.metadata.creationTimestamp
+ 
+kubectl delete -f <file-name>.yml
+ 
+ 
+ 
+==============================================================================================================================================
+ 
+ 
+CHECK
+=====
+Check cluster and nodes.
+ 
+ 
+CREATE
+=====
+Create or modify the resource.
+ 
+ 
+APPLY
+=====
+Apply the desired state.
+ 
+ 
+VERIFY
+=====
+Verify Deployment, Pods and Service.
+ 
+ 
+TEST
+=====
+Check logs and access the application.
+ 
+ 
+MONITOR
+=====
+Observe resources, events and metrics.
+ 
+ 
+CLEAN
+=====
+Delete activity resources when finished.
+ 
+
+============================================================================================
+ 
+
+================================
+ 
+=================================
+LEVEL 2 ===== MINIKUBE
+=================================
+ 
+=================================
+LEVEL 3 ===== KUBECTL
+=================================
+ 
+=================================
+LEVEL 4 ===== PODS
+=================================
+ 
+=================================
+LEVEL 5 ===== DEPLOYMENTS====================we deploy the deployments==================
+=================================
+ 
+=================================
+LEVEL 6 ===== SERVICES
+=================================
+ 
+=================================
+LEVEL 7 ===== CONFIGMAPS
+=================================
+ 
+=================================
+LEVEL 8 ===== SECRETS
+=================================
+ 
+=================================
+LEVEL 9 ===== VOLUMES
+=================================
+ 
+=================================
+LEVEL 10 ===== INGRESS
+=================================
+ 
+=================================
+LEVEL 11 ===== HELM
+=================================
+ 
+=================================
+LEVEL 12 ===== EKS
+=================================
+
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+
+
+
+
+Kubernates=============================
+
+
+
+===========================================================================================
+ 
+ 
+ 
+KUBERNETES ACTIVITY 1
+ 
+==========================================
+ 
+ 
+ 
+Pod = Smallest unit in Kubernetes that runs your application container(s).
+ 
+Namespace = A logical folder/partition inside the Kubernetes cluster.
+ 
+All Namespaces = Show pods from every namespace, not just the default one.
+ 
+ 
+Cluster = Apartment Building
+
+Namespace = Floors in the building
+
+Pods = Flats on each floor
+ 
+ 
+shows flats only on your current floor (default namespace).
+ 
+ 
+ 
+Prerequisite
+
+=====
+ 
+ 
+minikube start
+
+Reason:
+
+Start local Kubernetes cluster with single node.
+ 
+ 
+ 
+ 
+ 
+ 
+Step 1 ===== List All Pods In All Namespaces
+ 
+Command:
+
+kubectl get pods -A
+
+Reason:
+
+Displays all pods running in every namespace.
+ 
+ 
+Step 2 ===== Create Pod
+ 
+Command:
+
+kubectl run nginx --image=nginx --restart=Never
+
+Reason:
+
+Creates a standalone Nginx pod.
+ 
+ 
+Step 3 ===== Verify Pod Creation
+ 
+Command:
+
+kubectl get pods
+
+Reason:
+
+Confirms pod is running.
+ 
+ 
+Step 4 ===== Delete Pod
+ 
+Command:
+
+kubectl delete pod nginx
+
+Reason:
+
+Removes the pod.
+ 
+ 
+Step 5 ===== Create Deployment
+ 
+Command:
+
+kubectl create deployment nginx --image=nginx:latest**************************
+
+Reason:
+
+Creates Deployment for self-healing and scaling.
+ 
+ 
+Step 6 ===== Verify Deployment******************************
+ 
+Command:
+
+kubectl get deployments
+
+kubectl get rs
+
+kubectl get pods
+
+Reason:
+
+Checks Deployment, ReplicaSet and Pods.
+ 
+ 
+Step 7 ===== Expose Deployment
+ 
+Command:
+
+kubectl expose deployment nginx --type=LoadBalancer --port=80 --target-port=80
+
+Reason:
+
+Creates Service to expose application.
+ 
+ 
+Step 8 ===== Verify Services
+ 
+Command:
+
+kubectl get services
+
+Reason:
+
+Shows created Service.
+ 
+ 
+Step 9 ===== Start Minikube Tunnel************************************************
+ 
+Command:
+
+minikube tunnel
+
+Reason:
+
+Provides External IP for LoadBalancer service.
+ 
+ 
+Step 10 ===== Get Service Details
+ 
+Command:
+
+kubectl get service nginx
+
+Reason:
+
+Displays External IP assigned to service.
+ 
+ 
+Step 11 ===== Access Application
+ 
+Command:
+
+curl http://<EXTERNAL-IP>:80
+
+Reason:
+
+Validates application accessibility.
+ 
+ 
+Step 12 ===== View Pod Logs
+ 
+Command:
+
+kubectl get pods
+
+kubectl logs <pod-name>
+
+Reason:
+
+Shows application logs.
+ 
+ 
+Step 13 ===== View Detailed Pod Information
+ 
+Command:
+
+kubectl get pods -o wide
+
+Reason:
+
+Shows node, IP and additional pod details.
+ 
+ 
+Step 14 ===== Describe Pod
+ 
+Command:
+
+kubectl describe pod <pod-name>
+
+Reason:
+
+Displays complete pod configuration and events.
+ 
+ 
+Step 15 ===== View ReplicaSets
+ 
+Command:
+
+kubectl get rs
+
+Reason:
+
+Shows ReplicaSets created by deployment.
+ 
+ 
+Step 16 ===== View All Resources
+ 
+Command:
+
+kubectl get all
+
+minikube dashboard
+
+Reason:
+
+Displays cluster resources and opens dashboard.
+ 
+ 
+Step 17 ===== Export Deployment YAML
+ 
+Command:
+
+kubectl get deployment nginx -o yaml > deployment.yml
+
+cat deployment.yml
+
+Reason:
+
+Exports deployment configuration.
+ 
+ 
+ 
+HPA:
+ 
+HPA (Horizontal Pod Autoscaler) automatically increases or decreases the number of Pods based on CPU or Memory utilization.
+ 
+ 
+ 
+ 
+IMPORTANT Instructions:
+ 
+----------------------------
+ 
+ 
+For any Kubernetes activity, first verify the cluster, create or modify the resource, apply changes, verify Deployment and Pods, check logs, test application access, monitor resources, and finally perform cleanup.
+ 
+ 
+ 
+ COMPLETE RESOURCE FLOW
+
+====================================================
+ 
+ 
+User Request
+
+=====
+ 
+LoadBalancer Service
+
+=====
+ 
+Deployment
+
+=====
+ 
+ReplicaSet
+
+=====
+ 
+Pod
+
+=====
+ 
+Nginx Container
+ 
+ 
+ 
+ 
+=======================================================================================================================
+ 
+ 
+Commands
+ 
+ 
+Check cluster:
+
+minikube status
+ 
+ 
+Check all namespace pods:
+
+kubectl get pods -A
+ 
+ 
+Check current namespace resources:
+
+kubectl get all
+ 
+ 
+Check pod details:
+
+kubectl describe pod <pod-name>
+ 
+ 
+Check pod logs:
+
+kubectl logs <pod-name>
+ 
+ 
+Check Service:
+
+kubectl describe service nginx
+ 
+ 
+Check endpoints selected by Service:
+
+kubectl get endpoints nginx
+ 
+ 
+Get Minikube Service URL:
+
+minikube service nginx --url
+ 
+ 
+ 
+ 
+OPTIONAL CLEANUP
+
+===================================================
+ 
+ 
+ 
+Command:
+ 
+kubectl delete service nginx
+
+kubectl delete deployment nginx
+ 
+ 
+Sample Output:
+ 
+service "nginx" deleted
+
+deployment.apps "nginx" deleted
+ 
+ 
+Verify Cleanup:
+ 
+kubectl get all
+ 
+ 
+Possible Sample Output:
+ 
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   20m
+ 
+ 
+============================================================================================================================
+ 
+ 
+ 
+Troubleshooting:
+ 
+ 
+Step 1
+
+=====
+
+kubectl get pods
+ 
+Step 2
+
+=====
+
+kubectl describe pod <pod-name>
+ 
+Step 3
+
+=====
+
+kubectl logs <pod-name>
+ 
+Step 4
+
+=====
+
+Fix issue and redeploy
+ 
+ 
+
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+
+
+Kubernetes Activity 2 – Deploy Spring Boot Application on Minikube
+======================================================================
+ 
+ 
+ 
+Step 1 ===== Navigate to Application Folder
+ 
+Command:
+cd /home/lkmuser/eclipse-workspace/EmployeeManagementSystem
+Reason:
+Move to the Spring Boot project directory containing pom.xml.
+ 
+ 
+Step 2 ===== Verify Project Contents
+ 
+Command:
+ls
+Reason:
+Ensure pom.xml exists before building.
+ 
+ 
+Step 3 ===== Build the Application
+ 
+Command:
+mvn clean package
+Reason:
+Compiles code, runs tests, and creates executable JAR in target folder.
+ 
+ 
+Step 4 ===== Verify Build Output
+ 
+Command:
+ls target
+Reason:
+Confirm JAR file was generated successfully.
+ 
+ 
+Step 5 ===== Create Dockerfile
+ 
+Command:
+vi Dockerfile
+Reason:
+Dockerfile is required to build a container image.
+ 
+ 
+Sample Dockerfile:
+ 
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY target/*.jar app.jar
+EXPOSE 8081
+ENTRYPOINT ["java","-jar","app.jar"]
+ 
+ 
+Step 6 ===== Build Docker Image
+ 
+Command:
+docker build -t ems:dev .
+Reason:
+Creates Docker image containing Spring Boot application.
+ 
+ 
+Step 7 ===== Verify Image
+ 
+Command:
+docker images
+Reason:
+Confirm image ems:dev exists.
+ 
+ 
+Step 8 ===== Load Image into Minikube
+ 
+Command:
+minikube image load ems:dev
+Reason:
+Makes local Docker image available inside Minikube cluster.
+ 
+ 
+Step 9 ===== Create Deployment=POD+ReplicaSet
+ 
+Command:
+kubectl create deployment ems-app --image=ems:dev
+Reason:
+Creates Deployment which manages Pods and self-healing.
+ 
+ 
+Step 10 ===== Check Deployment
+ 
+Command:
+kubectl get deployments
+Reason:
+Verify Deployment creation.
+ 
+ 
+Step 11 ===== Check Pods
+ 
+Command:
+kubectl get pods
+Reason:
+Verify application Pod is running.
+ 
+ 
+Step 12 ===== View Pod Logs
+ 
+Command:
+kubectl logs <pod-id>
+Reason:
+Check application startup logs.
+ 
+ 
+Step 13 ===== Expose Deployment
+ 
+Command:
+kubectl expose deployment ems-app --type=LoadBalancer --port=8081 --target-port=8081
+Reason:
+Creates Service for external access.
+ 
+ 
+Step 14 ===== Start Tunnel
+ 
+Command:
+minikube tunnel
+Reason:
+Provides external IP for LoadBalancer service.
+ 
+ 
+ 
+Step 15 ===== Verify Service
+ 
+Command:
+kubectl get svc
+Reason:
+Obtain External-IP assigned to service.
+ 
+ 
+ 
+Step 16 ===== Access Application
+ 
+Command:
+curl http://<EXTERNAL-IP>:8081/employee/Controller/getDetails
+Reason:
+Validate application is accessible.
+ 
+ 
+ 
+ 
+ 
+HPA:
+ 
+HPA (Horizontal Pod Autoscaler) automatically increases or decreases the number of Pods based on CPU or Memory utilization.
+ 
+ 
+ 
+ 
+IMPORTANT Instructions:
+ 
+----------------------------
+ 
+ 
+For any Kubernetes activity, first verify the cluster, create or modify the resource, apply changes, verify Deployment and Pods, check logs, test application access, monitor resources, and finally perform cleanup.
+
+
+
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+
+ 
+KUBERNETES ACTIVITY 3 ===== SCALE SPRING BOOT APPLICATION
+ 
+===============================================================
+ 
+ 
+ 
+Prerequisite
+=====
+ 
+Application ems-app must already be deployed and accessible.
+ 
+ 
+Step 1 ===== Scale Deployment Up
+ 
+Command:
+kubectl scale deployment ems-app --replicas=3
+ 
+Reason:
+Increase the number of Pod instances from current count to 3.
+Useful when application traffic increases.
+ 
+ 
+ 
+Step 2 ===== Verify Deployment
+ 
+Command:
+kubectl get deployment
+ 
+Reason:
+Verify desired replicas, ready replicas and available replicas.
+ 
+ 
+ 
+Step 3 ===== Verify Pods
+ 
+Command:
+kubectl get pods
+ 
+Reason:
+Confirm Kubernetes created 3 running Pods.
+ 
+ 
+ 
+Step 4 ===== Verify Application Access
+ 
+Command:
+curl http://<EXTERNAL-IP>:8081/employee/Controller/getDetails
+ 
+Reason:
+Ensure application remains available after scaling.
+Load can now be served by multiple Pods.
+ 
+ 
+ 
+Step 5 ===== Scale Deployment Down
+ 
+Command:
+kubectl scale deployment ems-app --replicas=2
+ 
+Reason:
+Reduce resource consumption by decreasing Pod count from 3 to 2.
+ 
+ 
+ 
+Step 6 ===== Verify Deployment Again
+ 
+Command:
+kubectl get deployment
+ 
+Reason:
+Confirm Kubernetes updated deployment configuration.
+ 
+ 
+ 
+Step 7 ===== Verify Running Pods
+ 
+Command:
+kubectl get pods
+ 
+Reason:
+Check that only 2 Pods remain running.
+Kubernetes automatically terminates extra Pod.
+ 
+ 
+ 
+Step 8 ===== Verify Application Again
+ 
+Command:
+curl http://<EXTERNAL-IP>:8081/employee/Controller/getDetails
+ 
+Reason:
+Confirm application is still accessible after scale down.
+ 
+ 
+ 
+ 
+ 
+Important Concepts Related to this Activity:
+ 
+====================================================================
+ 
+ 
+Deployment
+=====
+Manages Pods and supports scaling, rolling updates and self-healing.
+ 
+Note:
+Kubernetes gradually replaces old Pods with new Pods so users can continue using the application during the update which is rolling feature.
+ 
+ 
+Replica
+=====
+A running copy of application Pod.
+ 
+ 
+Scaling Up
+=====
+Increasing number of Pod replicas.
+ 
+ 
+Scaling Down
+=====
+Decreasing number of Pod replicas.
+ 
+ 
+Self-Healing
+=====
+If a Pod crashes, Deployment recreates it automatically.
+ 
+ 
+scale up
+=====
+More Users = More Pods
+ 
+ 
+scale down
+=====
+Less Users = Less Pods
+ 
+ 
+ 
+====================================================================================
+ 
+ 
+HPA:
+ 
+HPA (Horizontal Pod Autoscaler) automatically increases or decreases the number of Pods based on CPU or Memory utilization.
+ 
+ 
+ 
+ 
+IMPORTANT Instructions:
+ 
+----------------------------
+ 
+ 
+For any Kubernetes activity, first verify the cluster, create or modify the resource, apply changes, verify Deployment and Pods, check logs, test application access, monitor resources, and finally perform cleanup.
+ 
+
+================================================================================================
+
+
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+
+
+
+KUBERNETES ACTIVITY 4
+======================================
+ 
+ 
+ 
+AUTOSCALING SPRING BOOT APPLICATION
+========================================
+ 
+ 
+ 
+OBJECTIVE
+=====
+ 
+Configure a Horizontal Pod Autoscaler (HPA) for the ems-app Deployment.
+The HPA will automatically increase or decrease Pod replicas according to CPU utilization.
+ 
+ 
+ 
+IMPORTANT CONCEPT
+=========================
+ 
+ 
+Manual Scaling
+=====
+You manually decide the number of Pods.
+ 
+ 
+Autoscaling
+=====
+Kubernetes automatically decides the number of Pods based on resource utilization.
+ 
+ 
+More CPU = More Pods
+ 
+ 
+Less CPU = Fewer Pods
+ 
+ 
+ 
+PREREQUISITES
+=========================================
+ 
+ 
+1. Minikube cluster must be running.
+ 
+2. ems-app Deployment must already exist.
+ 
+3. ems-app Pods must be running.
+ 
+4. Metrics Server must be enabled.
+ 
+5. The ems-app container must have a CPU resource request configured.
+ 
+6. The application should be exposed through a Service if load will be generated through an application URL.
+ 
+ 
+==============================================================================================================================================
+ 
+ 
+ 
+ 
+ACTIVITY 4
+-------------------
+ 
+ 
+ 
+STEP 1 ===== VERIFY MINIKUBE STATUS
+ 
+ 
+Command:
+minikube status
+ 
+Reason:
+Confirms that the Minikube cluster and Kubernetes components are running.
+ 
+Expected:
+The host, kubelet and API server should show Running.
+ 
+If Minikube is not running:
+minikube start
+ 
+ 
+ 
+STEP 2 ===== VERIFY THE EMS DEPLOYMENT
+ 
+ 
+Command:
+kubectl get deployment ems-app
+ 
+Reason:
+HPA works on an existing scalable resource such as a Deployment.
+This confirms that ems-app exists.
+ 
+For additional details:
+kubectl describe deployment ems-app
+ 
+ 
+ 
+STEP 3 ===== VERIFY CURRENT PODS
+ 
+ 
+Command:
+kubectl get pods
+ 
+Reason:
+Shows the current number and health of Pods before autoscaling is configured.
+ 
+Optional detailed view:
+kubectl get pods -o wide
+ 
+ 
+ 
+STEP 4 ===== ENABLE METRICS SERVER IN MINIKUBE*******************************************************************
+ 
+ 
+Command:
+minikube addons enable metrics-server
+ 
+Reason:
+HPA needs resource metrics such as CPU usage.
+Metrics Server collects these metrics from Kubernetes nodes and Pods.
+ 
+Verify the add-on:
+minikube addons list | grep metrics-server
+ 
+Wait until Metrics Server is ready:
+kubectl get deployment metrics-server -n kube-system
+ 
+Verify that metrics are available:
+kubectl top nodes
+kubectl top pods
+ 
+ 
+Important:
+ 
+Metrics may take a short period to appear after Metrics Server starts.
+If kubectl top reports that metrics are unavailable, inspect Metrics Server:
+ 
+kubectl get pods -n kube-system | grep metrics-server
+kubectl logs -n kube-system deployment/metrics-server
+ 
+ 
+ 
+ 
+STEP 5 ===== CONFIGURE A CPU REQUEST FOR EMS-APP
+ 
+ 
+Recommended command:
+kubectl set resources deployment ems-app --requests=cpu=100m,memory=128Mi --limits=cpu=500m,memory=512Mi
+ 
+Reason:
+CPU-based HPA calculates utilization as a percentage of the requested CPU.
+Without a CPU request, HPA may display CPU target as <unknown> and may not scale correctly.
+ 
+ 
+Meaning:
+ 
+100m CPU
+=====
+One tenth of one CPU core is requested for every Pod.
+ 
+ 
+500m CPU
+=====
+Each Pod is allowed to use up to half of one CPU core.
+ 
+ 
+128Mi and 512Mi
+=====
+ 
+ 
+These are the requested and maximum memory values.
+ 
+ 
+Wait for the Deployment rollout caused by the Pod template change:
+ 
+kubectl rollout status deployment/ems-app
+ 
+ 
+Verify resource values:
+ 
+kubectl describe deployment ems-app
+ 
+ 
+ 
+ 
+STEP 6 ===== REMOVE AN OLD HPA IF THIS ACTIVITY IS REPEATED
+ 
+ 
+Check existing HPA:
+kubectl get hpa
+ 
+If an HPA named ems-app already exists, remove it before creating it again:
+kubectl delete hpa ems-app
+ 
+Reason:
+Prevents an AlreadyExists error when repeating the activity.
+ 
+Note:
+Run the delete command only when an old ems-app HPA exists and a clean recreation is required.
+ 
+ 
+ 
+ 
+STEP 7 ===== CREATE THE HORIZONTAL POD AUTOSCALER
+ 
+ 
+Command:
+kubectl autoscale deployment ems-app --cpu-percent=50 --min=1 --max=10
+ 
+ 
+Reason:
+Creates an HPA for the ems-app Deployment.
+ 
+ 
+Parameter explanation:
+ 
+--cpu-percent=50
+=====
+Target average CPU utilization is 50 percent of the CPU request.
+ 
+ 
+--min=1
+=====
+The Deployment will maintain at least one Pod.
+ 
+ 
+--max=10
+=====
+ 
+The Deployment will not be scaled beyond ten Pods by this HPA.
+ 
+ 
+Alternative syntax on Kubernetes versions that support it:
+ 
+kubectl autoscale deployment ems-app --cpu=50% --min=1 --max=10
+ 
+ 
+Use the syntax supported by the installed kubectl version.
+ 
+Check help when required:
+kubectl autoscale --help
+ 
+ 
+ 
+ 
+STEP 8 ===== VERIFY THE HPA
+ 
+ 
+Command:
+kubectl get hpa
+ 
+Reason:
+Confirms that the Horizontal Pod Autoscaler was created.
+It displays the target utilization, replica limits and current replica count.
+ 
+Detailed command:
+kubectl describe hpa ems-app
+ 
+Reason:
+Displays HPA conditions, metrics, events and scaling decisions.
+ 
+ 
+If TARGETS shows <unknown>:
+ 
+1. Check Metrics Server:
+kubectl top pods
+ 
+2. Check CPU request:
+kubectl describe deployment ems-app
+ 
+3. Check HPA events:
+kubectl describe hpa ems-app
+ 
+ 
+ 
+ 
+STEP 9 ===== MONITOR HPA AND PODS
+ 
+ 
+Open a terminal and run:
+kubectl get hpa -w
+ 
+Reason:
+The -w option continuously watches HPA changes.
+ 
+Open another terminal and run:
+kubectl get pods -w
+ 
+Reason:
+Displays new Pods as the HPA scales the Deployment.
+ 
+Optional combined monitoring:
+kubectl get deployment,pods,hpa
+ 
+ 
+ 
+ 
+STEP 10 ===== VERIFY THE EMS SERVICE
+ 
+ 
+Command:
+kubectl get svc
+ 
+Reason:
+Confirms the Service name, port and external address used to access ems-app.
+ 
+If the Service was created as a LoadBalancer, keep the tunnel running in a separate terminal:
+minikube tunnel
+ 
+Reason:
+Minikube tunnel makes the LoadBalancer Service externally reachable in the local environment.
+ 
+Alternative Minikube command:
+minikube service ems-app --url
+ 
+ 
+Important:
+Use the actual Service name. If the Service name is different, replace ems-app with that name.
+ 
+ 
+ 
+STEP 11 ===== GENERATE APPLICATION LOAD
+ 
+ 
+Preferred method:
+Generate repeated requests from a temporary Pod inside the cluster.
+ 
+Command:
+kubectl run load-generator --image=busybox:1.36 --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://ems-app:8081/employee/Controller/getDetails; done"
+ 
+Reason:
+Repeated requests place load on the application so CPU usage can increase and trigger HPA.
+ 
+Important:
+The URL contains the Kubernetes Service name ems-app.
+If the Service has another name, replace ems-app with the real Service name.
+The endpoint path is case-sensitive. Use the exact path implemented by the Spring Boot application.
+ 
+If BusyBox exits because of an application or DNS issue, inspect it:
+kubectl logs load-generator
+kubectl describe pod load-generator
+ 
+Alternative method from the host:
+while true; do curl -s http://<EXTERNAL-IP>:8081/employee/Controller/getDetails > /dev/null; done
+ 
+Reason:
+Continuously sends requests through the external Service address.
+ 
+Stop the host loop with:
+CTRL + C
+ 
+Note:
+A lightweight endpoint may not generate enough CPU pressure. If scaling does not occur, use more concurrent load or a CPU-intensive test endpoint in a controlled training environment.
+ 
+ 
+ 
+ 
+STEP 12 ===== OBSERVE SCALE-UP
+ 
+ 
+Commands:
+kubectl get hpa -w
+ 
+In another terminal:
+kubectl get pods -w
+ 
+Reason:
+Shows whether CPU utilization rises above the target and whether Kubernetes creates more Pod replicas.
+ 
+Additional verification:
+kubectl get deployment ems-app
+kubectl top pods
+kubectl describe hpa ems-app
+ 
+What to observe:
+ 
+1. TARGETS CPU percentage increases.
+2. DESIRED replica count increases.
+3. New ems-app Pods are created.
+4. New Pods become Running and Ready.
+ 
+ 
+ 
+STEP 13 ===== STOP THE LOAD
+ 
+ 
+If the in-cluster load-generator Pod was used:
+kubectl delete pod load-generator
+ 
+Reason:
+Stops repeated requests and removes the temporary load generator.
+ 
+If the host while loop was used:
+Press CTRL + C
+ 
+ 
+ 
+STEP 14 ===== OBSERVE SCALE-DOWN
+ 
+ 
+Commands:
+kubectl get hpa -w
+kubectl get pods -w
+ 
+Reason:
+After CPU utilization falls, HPA can gradually reduce the number of Pods toward the minimum replica count.
+ 
+Verify final state:
+kubectl get deployment ems-app
+kubectl get hpa
+kubectl get pods
+ 
+Important:
+Scale-down is not normally immediate because Kubernetes uses stabilization behavior to prevent rapid replica changes.
+ 
+ 
+ 
+STEP 15 ===== VERIFY APPLICATION AVAILABILITY
+ 
+ 
+Using the external address:
+curl http://<EXTERNAL-IP>:8081/employee/Controller/getDetails
+ 
+Or use the Minikube service URL:
+minikube service ems-app --url
+ 
+Reason:
+Confirms that the application remains accessible after autoscaling tests.
+ 
+Important:
+Replace ems-app with the actual Service name if required.
+Use the correct endpoint capitalization from the Spring Boot controller.
+ 
+ 
+ 
+ 
+STEP 16 ===== CLEAN UP THE HPA IF REQUIRED
+ 
+ 
+Command:
+kubectl delete hpa ems-app
+ 
+Reason:
+Removes the autoscaling rule after the training exercise.
+ 
+Optional reset to one replica:
+kubectl scale deployment ems-app --replicas=1
+ 
+Reason:
+Returns the Deployment to one Pod and reduces local resource consumption.
+ 
+Optional removal of test-specific resource settings:
+kubectl set resources deployment ems-app --requests=cpu=0,memory=0 --limits=cpu=0,memory=0
+ 
+Trainer recommendation:
+Keep sensible resource requests and limits in real deployments. Remove them only when resetting a disposable laboratory environment.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+================================================================================================================================================
+ 
+ 
+ 
+COMPLETE  COMMAND
+ 
+===============================================================================================================================================
+ 
+ 
+ 
+minikube status
+ 
+kubectl get deployment ems-app
+ 
+kubectl get pods
+ 
+minikube addons enable metrics-server
+ 
+kubectl get deployment metrics-server -n kube-system
+ 
+kubectl top nodes
+ 
+kubectl top pods
+ 
+kubectl set resources deployment ems-app --requests=cpu=100m,memory=128Mi --limits=cpu=500m,memory=512Mi
+ 
+kubectl rollout status deployment/ems-app
+ 
+kubectl get hpa
+ 
+kubectl autoscale deployment ems-app --cpu-percent=50 --min=1 --max=10
+ 
+kubectl get hpa
+ 
+kubectl describe hpa ems-app
+ 
+kubectl get svc
+ 
+kubectl run load-generator --image=busybox:1.36 --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://ems-app:8081/employee/Controller/getDetails
+ 
+kubectl get hpa -w
+ 
+kubectl get pods -w
+ 
+kubectl top pods
+ 
+kubectl delete pod load-generator
+ 
+kubectl get hpa -w
+ 
+kubectl get pods -w
+ 
+kubectl get deployment ems-app
+ 
+ 
+ 
+===============================================================================================================================================
+ 
+ 
+ 
+Analogy:
+ 
+=========================
+ 
+ 
+ 
+Application Pods
+=====
+Cashiers in a supermarket.
+ 
+ 
+CPU Utilization
+=====
+How busy the cashiers are.
+ 
+ 
+HPA
+=====
+The floor manager watching the queue.
+ 
+ 
+High CPU
+=====
+Long customer queue, so the manager opens more counters.
+ 
+ 
+Low CPU
+=====
+Short customer queue, so the manager closes unnecessary counters.
+ 
+ 
+Minimum Pods
+=====
+Minimum counters that must remain open.
+ 
+ 
+Maximum Pods
+=====
+Maximum counters the supermarket can open.
+ 
+ 
+ 
+ 
+ 
+===============================================================================================================================================
+ 
+ 
+ 
+QUESTION 1 ===== WHAT IS HPA?
+ 
+Answer:
+HPA stands for Horizontal Pod Autoscaler.
+ 
+It automatically changes the number of Pod replicas based on observed metrics such as CPU utilization.
+ 
+ 
+QUESTION 2 ===== WHAT IS HORIZONTAL SCALING?
+ 
+Answer:
+Horizontal scaling means increasing or decreasing the number of Pod instances.
+ 
+ 
+QUESTION 3 ===== WHAT IS VERTICAL SCALING?
+ 
+Answer:
+Vertical scaling means increasing or decreasing CPU and memory assigned to a Pod or container.
+ 
+ 
+QUESTION 4 ===== DOES HPA CREATE NEW NODES?
+ 
+Answer:
+No. HPA changes Pod replicas. Node autoscaling is handled separately by a cluster or node autoscaler.
+ 
+ 
+QUESTION 5 ===== WHY IS CPU REQUEST IMPORTANT?
+ 
+Answer:
+For utilization-based CPU scaling, Kubernetes compares observed CPU usage with the requested CPU value.
+ 
+ 
+QUESTION 6 ===== WHAT DO MIN AND MAX MEAN?
+ 
+Answer:
+min is the smallest replica count allowed by the HPA. max is the largest replica count allowed by the HPA.
+ 
+ 
+QUESTION 7 ===== WHY DOES SCALE-DOWN TAKE TIME?
+ 
+Answer:
+Kubernetes uses stabilization behavior to avoid rapidly increasing and decreasing replicas when metrics fluctuate.
+ 
+ 
+ 
+===============================================================================================================================================
+ 
+ 
+Deployment
+=====
+Keeps the required Pods running.
+ 
+ 
+Metrics Server
+=====
+Measures CPU and memory usage.
+ 
+ 
+HPA
+=====
+Reads metrics and decides the replica count.
+ 
+ 
+More Load
+=====
+More Pods.
+ 
+ 
+Less Load
+=====
+Fewer Pods.
+ 
+ 
+==============================================================================================================================================
+ 
+ 
+ 
+ 
+COMMON ERRORS AND SOLUTIONS
+ 
+=========================================
+ 
+ 
+ 
+ERROR 1 ===== TARGETS SHOWS <unknown>
+ 
+ 
+Possible reasons:
+ 
+1. Metrics Server is unavailable.
+2. CPU request is missing.
+3. Metrics have not yet been collected.
+ 
+Checks:
+kubectl top pods
+kubectl describe deployment ems-app
+kubectl describe hpa ems-app
+kubectl get pods -n kube-system | grep metrics-server
+ 
+ 
+ 
+ERROR 2 ===== FAILEDGETRESOURCEMETRIC
+ 
+ 
+Possible reason:
+Metrics Server cannot provide CPU metrics.
+ 
+Checks:
+kubectl top nodes
+kubectl top pods
+kubectl logs -n kube-system deployment/metrics-server
+ 
+ 
+ 
+ 
+ERROR 3 ===== MISSING REQUEST FOR CPU
+ 
+ 
+Reason:
+The container does not define a CPU request.
+ 
+Correction:
+kubectl set resources deployment ems-app --requests=cpu=100m,memory=128Mi --limits=cpu=500m,memory=512Mi
+ 
+ 
+ 
+ERROR 4 ===== HPA DOES NOT INCREASE PODS
+ 
+ 
+Checks:
+ 
+1. Confirm current CPU:
+kubectl top pods
+ 
+2. Confirm HPA events:
+kubectl describe hpa ems-app
+ 
+3. Confirm load generator is running:
+kubectl get pod load-generator
+kubectl logs load-generator
+ 
+4. Confirm CPU request exists:
+kubectl describe deployment ems-app
+ 
+5. Confirm max replicas is greater than current replicas:
+kubectl get hpa
+ 
+ 
+ 
+ERROR 5 ===== SERVICE NAME NOT FOUND
+ 
+ 
+Reason:
+The load generator URL uses an incorrect Service name.
+ 
+Correction:
+kubectl get svc
+ 
+Use the exact Service name in the URL.
+ 
+ 
+ 
+ERROR 6 ===== CONNECTION REFUSED
+ 
+ 
+Possible reasons:
+ 
+1. Incorrect Service port.
+2. Incorrect targetPort.
+3. Application is not listening on port 8081.
+4. Pod is not Ready.
+5. Endpoint path is incorrect.
+ 
+Checks:
+kubectl get svc
+kubectl describe svc ems-app
+kubectl get endpoints ems-app
+kubectl get pods
+kubectl logs <ems-pod-name>
+ 
+ 
+ 
+ERROR 7 ===== HPA ALREADY EXISTS
+ 
+ 
+Error example:
+horizontalpodautoscaler.autoscaling "ems-app" already exists
+ 
+Correction:
+kubectl get hpa
+ 
+Either keep the existing HPA or recreate it:
+kubectl delete hpa ems-app
+kubectl autoscale deployment ems-app --cpu-percent=50 --min=1 --max=10
+ 
+ 
+ 
+ERROR 8 ===== LOAD-GENERATOR ALREADY EXISTS
+ 
+ 
+Correction:
+kubectl delete pod load-generator
+ 
+Then create it again.
+ 
+ 
+==============================================================================================================================================
+ 
+ 
+ 
+ 
+ 
+HPA:
+ 
+HPA (Horizontal Pod Autoscaler) automatically increases or decreases the number of Pods based on CPU or Memory utilization.
+ 
+ 
+ 
+ 
+IMPORTANT Instructions:
+ 
+----------------------------
+ 
+ 
+For any Kubernetes activity, first verify the cluster, create or modify the resource, apply changes, verify Deployment and Pods, check logs, test application access, monitor resources, and finally perform cleanup.
+
+
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================
+
+
+
+
+
+
+
+
+
+
+
