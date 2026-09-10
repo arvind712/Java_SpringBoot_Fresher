@@ -1,0 +1,85 @@
+Java
+1. What is Java?
+Java is an object-oriented, platform-independent programming language.
+2. What is JVM?
+JVM (Java Virtual Machine) executes Java bytecode.
+3. Difference between JDK, JRE, and JVM?
+JDK: Development kit (JRE + tools)
+JRE: Runtime environment
+JVM: Executes bytecode
+4. What is OOP? Object-Oriented Programming based on classes and objects.
+5. Four OOP principles? Encapsulation, Inheritance, Polymorphism, Abstraction.
+6. Difference between Array and ArrayList?
+Array: Fixed size.
+ArrayList: Dynamic size.
+7. Difference between String, StringBuilder, and StringBuffer?
+String: Immutable.
+StringBuilder: Mutable, not thread-safe.
+StringBuffer: Mutable, thread-safe.
+8. What is Exception Handling? Handling runtime errors using try-catch-finally.
+9. Checked vs Unchecked Exception?
+Checked: Compile-time.
+Unchecked: Runtime.
+10. What is Multithreading? Executing multiple threads simultaneously.
+Spring & Spring Boot
+11. What is Spring Framework? A framework for developing Java enterprise applications.
+12. What is Spring Boot? Simplifies Spring development with auto-configuration.
+13. Why use Spring Boot? Less configuration, embedded Tomcat, faster development.
+14. What is Dependency Injection? Spring automatically injects required objects.
+15. What is IoC? Inversion of Control—Spring manages object creation.
+16. What is @Autowired? Automatically injects a bean.
+17. What is @SpringBootApplication? Main annotation combining configuration, component scan, and auto-configuration.
+18. What is @RestController? Creates REST APIs and returns JSON.
+19. Difference between @Controller and @RestController? @Controller returns views; @RestController returns JSON.
+20. Difference between @RequestMapping and @GetMapping? @RequestMapping handles all methods; @GetMapping handles only GET.
+21. What is @PathVariable? Reads value from the URL.
+22. What is @RequestBody? Reads JSON request into a Java object.
+23. What is @ResponseBody? Returns object as JSON.
+Spring Data JPA
+24. What is JPA? Java Persistence API for database operations.
+25. What is Hibernate? JPA implementation.
+26. What is JpaRepository? Provides CRUD operations without writing SQL.
+27. Difference between save() and saveAll()? save() saves one object; saveAll() saves multiple.
+Microservices
+28. What is a Microservice? Small, independent service.
+29. Advantages? Independent deployment, scalability, fault isolation.
+30. What is Eureka Server? Service Registry.
+31. Why use API Gateway? Single entry point for all services.
+32. How do microservices communicate? REST APIs using HTTP.
+IMS Capstone
+33. Explain your project. Inventory Management System manages vendors, materials, and inventory using Spring Boot microservices.
+34. Which services did you implement? Vendor Service and Material Service.
+35. Database used? MySQL.
+36. Build tool? Maven.
+37. API testing tool? Postman.
+38. Which HTTP methods did you use? GET, POST, PUT, DELETE.
+39. What is REST API? Web service using HTTP methods.
+40. What is JSON? Lightweight data exchange format.
+Git
+41. What is Git? Version control system.
+42. Git commands? git clone, git add, git commit, git push, git pull.
+Jenkins
+43. What is Jenkins? CI/CD automation tool.
+44. What happens in your pipeline? Clone → Build → Test → SonarQube → Package → Deploy.
+SonarQube
+45. What is SonarQube? Tool for code quality analysis.
+46. What is Code Coverage? Percentage of code executed by tests.
+47. Why is coverage 0%? No JUnit tests or coverage report not generated.
+Docker
+48. What is Docker? Container platform.
+49. Difference between Image and Container? Image is a template; Container is a running instance.
+SQL
+50. Difference between DELETE, TRUNCATE, and DROP?
+DELETE: Removes selected rows.
+TRUNCATE: Removes all rows.
+DROP: Removes the entire table.
+Project-specific questions the SME is very likely to ask:
+Explain your Vendor Service flow.
+Explain your Material Service flow.
+Why did you choose Spring Boot?
+How did you connect MySQL?
+What APIs did you implement?
+How did you use Postman?
+Explain your Jenkins pipeline.
+Explain your SonarQube report.
+What challenges did you face and how did you solve them?

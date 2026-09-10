@@ -1,0 +1,68 @@
+sme:Saini
+Frontend dekha, kispe banaya, kispe banaya, kaise banaya, backend kaise connect Kiya, microservices kaise connect ki, kya problem face ki, consumer class pattern bas
+How you have connected to backend show the code what you have imported and what are the functions you have used  
+
+sme:Jayaraman karthik
+Aggregation relationship 
+And 
+Composition relationship 
+Lambda 
+thread-wait sleep
+ioc container
+
+he asked to share screen, and asked y u used intellij, and how u integrated the vendor service and material service with IMS
+
+At first he asked what is expected from u in frontend
+He also asked to show rhe addPurchase API and asked y did u use @RequestBody and @Valid in controller
+
+ayush kumar
+Dynamic polymorphism kaise krte hai. Final method, final class. Why we can't create the instance of an abstract class. What's the reason  behind this
+
+breif explaination about your project
+why 3 services instead of 1
+@restController
+@controllerAdvice
+@ExceptionHandler
+Bean scopes
+@pathvariable thats it
+
+What is spring spring boo annotations 
+Types of annotations 
+Show project
+
+Servlet Dispatcherservlet Why we use it All java concepts
+
+Priyanka viva question
+Explain project
+Why react
+Why microservices and advantages
+What is jpa
+Annotations
+Oops
+Polymorphism
+How frontend and backend communicate
+Rest template
+What is the data flow
+And some questions i forgot
+
+
+SUMA
+about project why 3 services explain todos which port used
+ui port if i want change then how i can i do
+then java shift asking java feature
+thread, sleep wait, thread synchronization
+why spring when u have collections api
+
+
+
+
+
+Yah done with my viva now 
+1.) about capstone project
+2.)if u have 2 beans with same name what will happen.
+3.)how can we declare 2 beans with same name
+4.) diff between primary and qualifier annotation 
+5.) What is the purpose of the `@CrossOrigin` annotation in Spring?
+6.)what are diff stereotype annotations in spring 
+7.) can we use @component annotation to create dao layer class
+8.) can you provide some real world example of encapsulation

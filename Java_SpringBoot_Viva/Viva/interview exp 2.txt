@@ -1,0 +1,38 @@
+*Note:-* Before viva, make sure to execute your entire application.
+
+1. What is the problem statement of the capstone project ?
+2. What is the role of IMS in your capstone project?
+3. What technologies have you used in your project?
+4. Show me your backend and frontend?
+5. Why have you used React in your frontend?
+6. Is React a javascript framework or library?
+7. Any difference between framework and library?
+8. Which is the main component in the frontend code?
+9. What is the useState()?
+10. Show me the flow of your entire application?
+11. Have you applied any validations in your purchase form?
+12. Show me the configuration where microservices communicate with each other?
+13. How are you transferring data?
+14. What Todos have you written in your microservices?
+15. What is the difference between @NotBlank and @NotNull?
+16. What is the use of the HealthController in InventoryManagementSystem?
+17. What is the role of @CrossOrigin?
+18. Why have you used @SessionAttributes?
+19. What is the purpose of the @RestController?
+20. Explain @Autowired?
+21. Explain the methods in your controller file?
+22. Why are you using ResponseEntity as a return type in your controller methods?
+23. Why have you used HttpSession as a parameter in your controller methods?
+24. Explain ReportsController?
+25. What does @RequestMapping do?
+26. Why have you used @GetMapping or @PostMapping in the previous controller but @RequestMapping in this controller?
+27. Can you add @RequestMapping at class level?
+28. Why is this Logger used in every class of your microservices?
+29. In the place of Logger can we use System.out.println() statement?
+30. How are you handling exceptions in your microservices?
+31. What is @RestControllerAdvice?
+32. Explain application.properties file?
+33. Have you used Active Profiles in your code?
+34. Why did you mention service urls in your IMS properties file?
+35. Why do you use message_en.properties?
+36. Can we change the name of the message_en.properties file?
